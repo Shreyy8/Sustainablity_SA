@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { store } from "@saakshi/db";
-import { generateStoryScript } from "@saakshi/core";
-import { buildReelVideoUrl } from "@saakshi/media";
+import { store } from "@pluribus/db";
+import { generateStoryScript } from "@pluribus/core";
+import { buildReelVideoUrl } from "@pluribus/media";
 
 export async function GET() {
   const stories = store.getStories();
@@ -68,7 +68,7 @@ export async function POST(req: Request) {
     const reelBeats = script.beats.map((b) => {
       const a = store.getAssetById(b.assetId);
       return {
-        publicId: a?.cldPublicId || "saakshi/demo/sample",
+        publicId: a?.cldPublicId || "pluribus/demo/sample",
         durationSeconds: b.durationSeconds,
         headline: b.headline,
         resourceType: a?.resourceType || "image"
@@ -85,7 +85,7 @@ export async function POST(req: Request) {
       projectId,
       format: script.format,
       script: script as any,
-      videoPublicId: `saakshi/stories/${storyId}`,
+      videoPublicId: `pluribus/stories/${storyId}`,
       url: videoUrl,
       status: "rendered",
       createdAt: new Date().toISOString()

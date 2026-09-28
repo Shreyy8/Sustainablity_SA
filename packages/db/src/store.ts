@@ -26,7 +26,7 @@ import type {
   AuditLog
 } from "./types.js";
 
-class SaakshiStore {
+class PluribusStore {
   private orgs: Organization[] = [...SEED_ORGS];
   private users: AppUser[] = [...SEED_USERS];
   private grants: Grant[] = [...SEED_GRANTS];
@@ -303,4 +303,4 @@ class SaakshiStore {
 }
 
 // Global singleton instance
-export const store = new SaakshiStore();
+export const store = new PluribusStore();

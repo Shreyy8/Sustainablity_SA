@@ -1,7 +1,7 @@
 import { v2 as cloudinary } from "cloudinary";
 
 export function configureCloudinary() {
-  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || process.env.CLOUDINARY_CLOUD_NAME || "saakshi-demo";
+  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || process.env.CLOUDINARY_CLOUD_NAME || "pluribus-demo";
   const apiKey = process.env.CLOUDINARY_API_KEY || "mock-api-key";
   const apiSecret = process.env.CLOUDINARY_API_SECRET || "mock-api-secret";
 

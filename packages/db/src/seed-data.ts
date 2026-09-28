@@ -18,7 +18,7 @@ export const SEED_ORGS: Organization[] = [
     type: "CORPORATE",
     name: "Tata Sustainability Trust",
     slug: "tata-trust",
-    logoPublicId: "saakshi/logos/tata_trust",
+    logoPublicId: "pluribus/logos/tata_trust",
     createdAt: "2025-01-01T00:00:00Z"
   },
   {
@@ -26,7 +26,7 @@ export const SEED_ORGS: Organization[] = [
     type: "NGO",
     name: "Gramin Vikas Sansthan",
     slug: "gramin-vikas",
-    logoPublicId: "saakshi/logos/gramin_vikas",
+    logoPublicId: "pluribus/logos/gramin_vikas",
     createdAt: "2025-01-01T00:00:00Z"
   },
   {
@@ -34,7 +34,7 @@ export const SEED_ORGS: Organization[] = [
     type: "NGO",
     name: "Yuva Parivartan Foundation",
     slug: "yuva-parivartan",
-    logoPublicId: "saakshi/logos/yuva_parivartan",
+    logoPublicId: "pluribus/logos/yuva_parivartan",
     createdAt: "2025-01-01T00:00:00Z"
   },
   {
@@ -123,7 +123,7 @@ export const SEED_PROJECTS: Project[] = [
     activities: ["borewell_handpump", "toilet_block", "handwashing_station"],
     state: "Rajasthan",
     district: "Barmer",
-    cldFolder: "saakshi/tata-trust/gramin-vikas/barmer-wash"
+    cldFolder: "pluribus/tata-trust/gramin-vikas/barmer-wash"
   },
   {
     id: "proj-2",
@@ -133,7 +133,7 @@ export const SEED_PROJECTS: Project[] = [
     activities: ["classroom_construction", "smart_class", "anganwadi_renovation"],
     state: "Maharashtra",
     district: "Nashik",
-    cldFolder: "saakshi/tata-trust/yuva-parivartan/nashik-edu"
+    cldFolder: "pluribus/tata-trust/yuva-parivartan/nashik-edu"
   },
   {
     id: "proj-3",
@@ -143,7 +143,7 @@ export const SEED_PROJECTS: Project[] = [
     activities: ["plantation", "pond_rejuvenation", "solar_install"],
     state: "Bihar",
     district: "Gaya",
-    cldFolder: "saakshi/tata-trust/gramin-vikas/gaya-environment"
+    cldFolder: "pluribus/tata-trust/gramin-vikas/gaya-environment"
   }
 ];
 
@@ -307,7 +307,7 @@ export const SEED_ASSETS: Asset[] = [
   {
     id: "ast-001",
     shortId: "WASH-01",
-    cldPublicId: "saakshi/tata-trust/gramin-vikas/barmer-wash/borewell_verified",
+    cldPublicId: "pluribus/tata-trust/gramin-vikas/barmer-wash/borewell_verified",
     cldVersion: 1711200001,
     cldAssetId: "cld-ast-001",
     resourceType: "image",
@@ -346,7 +346,7 @@ export const SEED_ASSETS: Asset[] = [
   {
     id: "ast-002",
     shortId: "WASH-02",
-    cldPublicId: "saakshi/tata-trust/gramin-vikas/barmer-wash/borewell_burst_angle2",
+    cldPublicId: "pluribus/tata-trust/gramin-vikas/barmer-wash/borewell_burst_angle2",
     cldVersion: 1711200002,
     cldAssetId: "cld-ast-002",
     resourceType: "image",
@@ -389,7 +389,7 @@ export const SEED_ASSETS: Asset[] = [
   {
     id: "ast-003",
     shortId: "WASH-03",
-    cldPublicId: "saakshi/tata-trust/gramin-vikas/barmer-wash/handwash_children",
+    cldPublicId: "pluribus/tata-trust/gramin-vikas/barmer-wash/handwash_children",
     cldVersion: 1711200003,
     cldAssetId: "cld-ast-003",
     resourceType: "image",
@@ -425,7 +425,7 @@ export const SEED_ASSETS: Asset[] = [
   {
     id: "ast-004",
     shortId: "WASH-04-B",
-    cldPublicId: "saakshi/tata-trust/gramin-vikas/barmer-wash/toilet_before",
+    cldPublicId: "pluribus/tata-trust/gramin-vikas/barmer-wash/toilet_before",
     cldVersion: 1711200004,
     cldAssetId: "cld-ast-004",
     resourceType: "image",
@@ -459,7 +459,7 @@ export const SEED_ASSETS: Asset[] = [
   {
     id: "ast-005",
     shortId: "WASH-05-A",
-    cldPublicId: "saakshi/tata-trust/gramin-vikas/barmer-wash/toilet_after",
+    cldPublicId: "pluribus/tata-trust/gramin-vikas/barmer-wash/toilet_after",
     cldVersion: 1711200005,
     cldAssetId: "cld-ast-005",
     resourceType: "image",
@@ -493,7 +493,7 @@ export const SEED_ASSETS: Asset[] = [
   {
     id: "ast-006",
     shortId: "EDU-01-B",
-    cldPublicId: "saakshi/tata-trust/yuva-parivartan/nashik-edu/classroom_before",
+    cldPublicId: "pluribus/tata-trust/yuva-parivartan/nashik-edu/classroom_before",
     cldVersion: 1711200006,
     cldAssetId: "cld-ast-006",
     resourceType: "image",
@@ -527,7 +527,7 @@ export const SEED_ASSETS: Asset[] = [
   {
     id: "ast-007",
     shortId: "EDU-02-A",
-    cldPublicId: "saakshi/tata-trust/yuva-parivartan/nashik-edu/classroom_after",
+    cldPublicId: "pluribus/tata-trust/yuva-parivartan/nashik-edu/classroom_after",
     cldVersion: 1711200007,
     cldAssetId: "cld-ast-007",
     resourceType: "image",
@@ -561,7 +561,7 @@ export const SEED_ASSETS: Asset[] = [
   {
     id: "ast-008",
     shortId: "DUP-FLAG",
-    cldPublicId: "saakshi/tata-trust/gramin-vikas/barmer-wash/reused_signboard_fraud",
+    cldPublicId: "pluribus/tata-trust/gramin-vikas/barmer-wash/reused_signboard_fraud",
     cldVersion: 1711200008,
     cldAssetId: "cld-ast-008",
     resourceType: "image",
@@ -610,7 +610,7 @@ export const SEED_ASSETS: Asset[] = [
   {
     id: "ast-009",
     shortId: "GEO-BREACH",
-    cldPublicId: "saakshi/tata-trust/gramin-vikas/gaya-environment/tree_far_away",
+    cldPublicId: "pluribus/tata-trust/gramin-vikas/gaya-environment/tree_far_away",
     cldVersion: 1711200009,
     cldAssetId: "cld-ast-009",
     resourceType: "image",
@@ -651,7 +651,7 @@ export const SEED_ASSETS: Asset[] = [
   {
     id: "ast-010",
     shortId: "ENV-01",
-    cldPublicId: "saakshi/tata-trust/gramin-vikas/gaya-environment/sapling_plantation",
+    cldPublicId: "pluribus/tata-trust/gramin-vikas/gaya-environment/sapling_plantation",
     cldVersion: 1711200010,
     cldAssetId: "cld-ast-010",
     resourceType: "image",
@@ -770,8 +770,8 @@ export const SEED_REPORTS: Report[] = [
     templateVersion: "v1.2",
     scope: { grantIds: ["grant-1", "grant-2"] },
     status: "published",
-    pdfPublicId: "saakshi/reports/tata-trust/rep-001_q3_update",
-    pdfUrl: "https://res.cloudinary.com/saakshi-demo/image/upload/v1/saakshi/reports/q3_funder_update.pdf",
+    pdfPublicId: "pluribus/reports/tata-trust/rep-001_q3_update",
+    pdfUrl: "https://res.cloudinary.com/pluribus-demo/image/upload/v1/pluribus/reports/q3_funder_update.pdf",
     summaryNarrative:
       "Tata Sustainability Trust achieved 94% verified milestone coverage across Rajasthan and Maharashtra CSR programs in Q3. Handwashing stations and classroom weatherproofing reached full operational status [asset:WASH-03]. Over 450 school children benefit from restored water and dignified sanitation facilities [asset:WASH-05-A].",
     assetIds: ["ast-001", "ast-003", "ast-005", "ast-007"],
@@ -787,7 +787,7 @@ export const SEED_STORIES: Story[] = [
     format: "reel_9_16",
     status: "rendered",
     url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-    videoPublicId: "saakshi/stories/barmer_wash_reel_9_16",
+    videoPublicId: "pluribus/stories/barmer_wash_reel_9_16",
     script: {
       title: "Barmer Clean Water & Sanitation Impact Reel",
       beats: [
@@ -795,7 +795,7 @@ export const SEED_STORIES: Story[] = [
         { beat: 2, text: "Gramin Vikas Sansthan mapped 12 desert villages." },
         { beat: 3, text: "Together with Tata Trust, 15 new borewells were installed." },
         { beat: 4, text: "100% verified with GPS & immutable photographic proof." },
-        { beat: 5, text: "Every Rupee Witnessed. Saakshi Evidence Vault." }
+        { beat: 5, text: "Every Rupee Witnessed. Pluribus Evidence Vault." }
       ]
     },
     createdAt: "2026-02-10T16:00:00Z"

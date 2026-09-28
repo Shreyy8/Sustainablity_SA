@@ -1,4 +1,4 @@
-import type { CheckResult } from "@saakshi/core";
+import type { CheckResult } from "@pluribus/core";
 
 export type OrgType = "CORPORATE" | "NGO" | "ASSESSOR";
 export type UserRole = "FIELD" | "NGO_ADMIN" | "CORP_ADMIN" | "CORP_VIEWER" | "ASSESSOR" | "SUPER";

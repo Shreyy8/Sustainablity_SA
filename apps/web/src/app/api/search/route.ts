@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { parseSearchQuery, generateEmbedding } from "@saakshi/ai";
-import { cosineSimilarity } from "@saakshi/core";
-import { store } from "@saakshi/db";
+import { parseSearchQuery, generateEmbedding } from "@pluribus/ai";
+import { cosineSimilarity } from "@pluribus/core";
+import { store } from "@pluribus/db";
 
 export async function GET(req: Request) {
   try {

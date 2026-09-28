@@ -108,15 +108,15 @@ export function generateStoryScript(params: {
       assetShortId: ctaAsset.shortId,
       durationSeconds: 5,
       headline: "Every Rupee Witnessed",
-      voiceoverText: `Saakshi Evidence Vault: Building transparent CSR trust for India.`,
-      captionOverlay: `Supported by ${corporateFunder} · Saakshi Verified`
+      voiceoverText: `Pluribus Evidence Vault: Building transparent CSR trust for India.`,
+      captionOverlay: `Supported by ${corporateFunder} · Pluribus Verified`
     }
   ];
 
   const totalDurationSeconds = beats.reduce((sum, b) => sum + b.durationSeconds, 0);
 
-  const linkedinCopy = `Proud to share verified ground impact from "${projectName}". In partnership with ${partnerNgo} and supported by ${corporateFunder}, every milestone is backed by real-time GPS and tamper-evident evidence in the Saakshi Evidence Vault.\n\n#CSRIndia #SustainableImpact #CompaniesAct135 #SocialImpact #ESG #Transparency`;
-  const instagramCopy = `Real change, witnessed on the ground 🌿✨\n\nTake a look inside "${projectName}" where community impact meets tamper-evident transparency. Supported by ${corporateFunder} & ${partnerNgo}.\n\n#SaakshiVault #CSRIndia #RealImpact #RuralDevelopment`;
+  const linkedinCopy = `Proud to share verified ground impact from "${projectName}". In partnership with ${partnerNgo} and supported by ${corporateFunder}, every milestone is backed by real-time GPS and tamper-evident evidence in the Pluribus Evidence Vault.\n\n#CSRIndia #SustainableImpact #CompaniesAct135 #SocialImpact #ESG #Transparency`;
+  const instagramCopy = `Real change, witnessed on the ground 🌿✨\n\nTake a look inside "${projectName}" where community impact meets tamper-evident transparency. Supported by ${corporateFunder} & ${partnerNgo}.\n\n#PluribusVault #CSRIndia #RealImpact #RuralDevelopment`;
 
   return {
     id: `story-${Date.now()}`,

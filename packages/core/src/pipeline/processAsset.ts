@@ -83,7 +83,7 @@ export interface PipelineResult {
 }
 
 /**
- * Executes the complete Saakshi processing pipeline:
+ * Executes the complete Pluribus processing pipeline:
  * enrich -> vision -> caption -> assign -> verify -> pair
  */
 export async function runAssetPipeline(

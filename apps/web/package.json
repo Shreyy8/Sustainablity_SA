@@ -1,5 +1,5 @@
 {
-  "name": "@saakshi/web",
+  "name": "@pluribus/web",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -9,10 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@saakshi/core": "workspace:*",
-    "@saakshi/media": "workspace:*",
-    "@saakshi/ai": "workspace:*",
-    "@saakshi/db": "workspace:*",
+    "@pluribus/core": "workspace:*",
+    "@pluribus/media": "workspace:*",
+    "@pluribus/ai": "workspace:*",
+    "@pluribus/db": "workspace:*",
     "next": "^15.1.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

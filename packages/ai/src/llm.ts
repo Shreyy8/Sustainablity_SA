@@ -169,11 +169,11 @@ export async function generateReportNarrative(factsBundle: any): Promise<ReportN
   }
 
   const executiveSummary =
-    `During ${period}, ${corporateName} maintained transparent CSR milestone verification with ${totalEvidence} photographic assets archived in the Saakshi Evidence Vault. ` +
+    `During ${period}, ${corporateName} maintained transparent CSR milestone verification with ${totalEvidence} photographic assets archived in the Pluribus Evidence Vault. ` +
     `Overall portfolio trust stands at ${factsBundle.portfolioSummary?.avgTrustScore || 92}/100, with ${verifiedPercent}% of submissions fully verified against tamper and duplicate checks.`;
 
   const complianceNote =
-    `This report has been compiled in accordance with Companies Act 2013 §135 and Schedule VII CSR guidelines. Every factual claim and milestone assertion references an immutable asset version in the Saakshi Evidence Vault.`;
+    `This report has been compiled in accordance with Companies Act 2013 §135 and Schedule VII CSR guidelines. Every factual claim and milestone assertion references an immutable asset version in the Pluribus Evidence Vault.`;
 
   return {
     executiveSummary,

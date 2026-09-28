@@ -2,8 +2,8 @@
  * Auto-Assignment Accuracy Evaluation Script
  * Tests candidate ranking and auto-assignment thresholds across seed locations and activities.
  */
-import { scoreAssignment, rankAssignments } from "@saakshi/core";
-import { SEED_SITES, SEED_PROJECTS, SEED_MILESTONES } from "@saakshi/db";
+import { scoreAssignment, rankAssignments } from "@pluribus/core";
+import { SEED_SITES, SEED_PROJECTS, SEED_MILESTONES } from "@pluribus/db";
 
 interface AssignmentTestCase {
   name: string;
@@ -88,7 +88,7 @@ const TEST_CASES: AssignmentTestCase[] = [
 
 function runAssignmentEvaluation() {
   console.log("==================================================");
-  console.log("   SAAKSHI AUTO-ASSIGNMENT EVALUATION HARNESS    ");
+  console.log("   PLURIBUS AUTO-ASSIGNMENT EVALUATION HARNESS    ");
   console.log("==================================================\n");
 
   const candidatesList = SEED_SITES.map((site) => {

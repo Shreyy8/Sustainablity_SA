@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { store } from "@saakshi/db";
-import { selectEvidenceForReport, buildFactsBundle, validateCitations } from "@saakshi/core";
-import { generateReportNarrative } from "@saakshi/ai";
+import { store } from "@pluribus/db";
+import { selectEvidenceForReport, buildFactsBundle, validateCitations } from "@pluribus/core";
+import { generateReportNarrative } from "@pluribus/ai";
 
 export async function GET() {
   const reports = store.getReports();
@@ -103,8 +103,8 @@ export async function POST(req: Request) {
       status: "draft",
       summaryNarrative: narrativeResult.executiveSummary,
       assetIds: selectedAssets.map((a) => a.id),
-      pdfPublicId: `saakshi/reports/${reportId}`,
-      pdfUrl: `https://res.cloudinary.com/saakshi-demo/image/upload/v1/saakshi/reports/${reportId}.pdf`,
+      pdfPublicId: `pluribus/reports/${reportId}`,
+      pdfUrl: `https://res.cloudinary.com/pluribus-demo/image/upload/v1/pluribus/reports/${reportId}.pdf`,
       createdAt: new Date().toISOString()
     });
 

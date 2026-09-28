@@ -25,8 +25,8 @@ export interface BuildUploadParamsInput {
   isVideo?: boolean;
 }
 
-export const PRESET_IMAGE = "saakshi_field_signed";
-export const PRESET_VIDEO = "saakshi_video_signed";
+export const PRESET_IMAGE = "pluribus_field_signed";
+export const PRESET_VIDEO = "pluribus_video_signed";
 
 export function buildAssetFolder(input: {
   corporateSlug: string;
@@ -34,7 +34,7 @@ export function buildAssetFolder(input: {
   projectSlug: string;
   siteSlug?: string;
 }): string {
-  const parts = ["saakshi", input.corporateSlug, input.ngoSlug, input.projectSlug];
+  const parts = ["pluribus", input.corporateSlug, input.ngoSlug, input.projectSlug];
   if (input.siteSlug) parts.push(input.siteSlug);
   return parts.join("/");
 }

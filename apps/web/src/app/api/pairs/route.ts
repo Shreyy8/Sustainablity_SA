@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { store } from "@saakshi/db";
-import { buildCompositeUrl } from "@saakshi/media";
-import { generateChangeSummary } from "@saakshi/ai";
+import { store } from "@pluribus/db";
+import { buildCompositeUrl } from "@pluribus/media";
+import { generateChangeSummary } from "@pluribus/ai";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);

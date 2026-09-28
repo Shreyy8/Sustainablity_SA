@@ -1,12 +1,12 @@
 -- ============================================================================
--- SAAKSHI: AI-Powered CSR Evidence Vault — Seed Data (PostgreSQL / Supabase)
+-- PLURIBUS: AI-Powered CSR Evidence Vault — Seed Data (PostgreSQL / Supabase)
 -- ============================================================================
 
 -- 1. Organizations
 insert into organization (id, type, name, slug, logo_public_id) values
-  ('org-corp-1', 'CORPORATE', 'Tata Sustainability Trust', 'tata-trust', 'saakshi/logos/tata_trust'),
-  ('org-ngo-1', 'NGO', 'Gramin Vikas Sansthan', 'gramin-vikas', 'saakshi/logos/gramin_vikas'),
-  ('org-ngo-2', 'NGO', 'Yuva Parivartan Foundation', 'yuva-parivartan', 'saakshi/logos/yuva_parivartan'),
+  ('org-corp-1', 'CORPORATE', 'Tata Sustainability Trust', 'tata-trust', 'pluribus/logos/tata_trust'),
+  ('org-ngo-1', 'NGO', 'Gramin Vikas Sansthan', 'gramin-vikas', 'pluribus/logos/gramin_vikas'),
+  ('org-ngo-2', 'NGO', 'Yuva Parivartan Foundation', 'yuva-parivartan', 'pluribus/logos/yuva_parivartan'),
   ('org-assessor-1', 'ASSESSOR', 'Social Impact Audit Services LLP', 'sias-audit', null)
 on conflict (id) do nothing;
 
@@ -27,9 +27,9 @@ on conflict (id) do nothing;
 
 -- 4. Projects
 insert into project (id, grant_id, name, description, activities, state, district, cld_folder) values
-  ('proj-1', 'grant-1', 'Barmer Clean Water & School Sanitation', 'Installation of community hand pumps, school toilet blocks, and handwashing stations across 12 villages in Barmer.', array['borewell_handpump', 'toilet_block', 'handwashing_station'], 'Rajasthan', 'Barmer', 'saakshi/tata-trust/gramin-vikas/barmer-wash'),
-  ('proj-2', 'grant-2', 'Nashik Smart Classrooms & Anganwadi Renovation', 'Structural overhaul of 8 village schools with durable tin roofing, BALA murals, and student study desks.', array['classroom_construction', 'smart_class', 'anganwadi_renovation'], 'Maharashtra', 'Nashik', 'saakshi/tata-trust/yuva-parivartan/nashik-edu'),
-  ('proj-3', 'grant-3', 'Gaya Community Plantation & Pond Rejuvenation', 'Desilting village ponds combined with 2,500 tree saplings protected by metal guards and drip irrigation.', array['plantation', 'pond_rejuvenation', 'solar_install'], 'Bihar', 'Gaya', 'saakshi/tata-trust/gramin-vikas/gaya-environment')
+  ('proj-1', 'grant-1', 'Barmer Clean Water & School Sanitation', 'Installation of community hand pumps, school toilet blocks, and handwashing stations across 12 villages in Barmer.', array['borewell_handpump', 'toilet_block', 'handwashing_station'], 'Rajasthan', 'Barmer', 'pluribus/tata-trust/gramin-vikas/barmer-wash'),
+  ('proj-2', 'grant-2', 'Nashik Smart Classrooms & Anganwadi Renovation', 'Structural overhaul of 8 village schools with durable tin roofing, BALA murals, and student study desks.', array['classroom_construction', 'smart_class', 'anganwadi_renovation'], 'Maharashtra', 'Nashik', 'pluribus/tata-trust/yuva-parivartan/nashik-edu'),
+  ('proj-3', 'grant-3', 'Gaya Community Plantation & Pond Rejuvenation', 'Desilting village ponds combined with 2,500 tree saplings protected by metal guards and drip irrigation.', array['plantation', 'pond_rejuvenation', 'solar_install'], 'Bihar', 'Gaya', 'pluribus/tata-trust/gramin-vikas/gaya-environment')
 on conflict (id) do nothing;
 
 -- 5. Sites

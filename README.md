@@ -1,4 +1,4 @@
-# Saakshi — AI-Powered CSR Evidence Vault
+# Pluribus — AI-Powered CSR Evidence Vault
 
 > **Trust layer for social-sector spending in India (Companies Act §135).**
 > Media-first evidence vault that captures field media with provenance, leverages Cloudinary AI & Transformations for tamper verification, auto-assigns evidence to projects/sites/milestones, detects photo reuse with perceptual hashing, pairs before/after progress, and generates audit-grade compliance reports with strict citations.
@@ -8,7 +8,7 @@
 ## 🏛️ Architecture Overview
 
 ```
-saakshi/
+pluribus/
 ├── packages/
 │   ├── core/         # Pure domain logic (Trust Engine, Auto-assignment, Pairing, Report Citations, Pipeline)
 │   ├── media/        # Cloudinary integration (Signed Uploads, Webhooks, Transformed/Composite/Reel URLs, SMD)
@@ -70,7 +70,7 @@ All automated evaluation scripts and unit tests pass with 100% scores:
 
 | Metric | Target | Result | Command |
 |---|---|---|---|
-| **Unit Test Suite** | 100% pass | **18/18 Passed** | `pnpm --filter @saakshi/core test` |
+| **Unit Test Suite** | 100% pass | **18/18 Passed** | `pnpm --filter @pluribus/core test` |
 | **Duplicate Recall** | ≥ 95% | **100.0%** | `pnpm eval:dup` |
 | **Duplicate Precision** | ≥ 90% | **100.0%** | `pnpm eval:dup` |
 | **Burst False Alarms** | 0 | **0** | `pnpm eval:dup` |

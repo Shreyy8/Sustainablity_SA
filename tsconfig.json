@@ -8,10 +8,10 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@saakshi/core": ["./packages/core/src/index.ts"],
-      "@saakshi/media": ["./packages/media/src/index.ts"],
-      "@saakshi/ai": ["./packages/ai/src/index.ts"],
-      "@saakshi/db": ["./packages/db/src/index.ts"]
+      "@pluribus/core": ["./packages/core/src/index.ts"],
+      "@pluribus/media": ["./packages/media/src/index.ts"],
+      "@pluribus/ai": ["./packages/ai/src/index.ts"],
+      "@pluribus/db": ["./packages/db/src/index.ts"]
     }
   }
 }

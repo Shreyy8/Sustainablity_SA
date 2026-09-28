@@ -1,6 +1,6 @@
 import { cld } from "./client.js";
 
-export interface SaakshiStructuredMetadata {
+export interface PluribusStructuredMetadata {
   sk_org_corp?: string;
   sk_org_ngo?: string;
   sk_project?: string;
@@ -18,7 +18,7 @@ export interface SaakshiStructuredMetadata {
 
 export async function writeBackMetadata(
   publicId: string,
-  metadata: SaakshiStructuredMetadata,
+  metadata: PluribusStructuredMetadata,
   options?: { activityTag?: string }
 ): Promise<boolean> {
   try {

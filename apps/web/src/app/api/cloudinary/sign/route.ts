@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { signUploadRequest } from "@saakshi/media";
+import { signUploadRequest } from "@pluribus/media";
 
 export async function POST(req: Request) {
   try {

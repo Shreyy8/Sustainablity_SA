@@ -1,12 +1,12 @@
 {
-  "name": "saakshi-monorepo",
+  "name": "pluribus-monorepo",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "pnpm --filter @saakshi/web dev",
-    "build": "pnpm --filter \"@saakshi/*\" build",
-    "test": "pnpm --filter \"@saakshi/*\" test",
-    "lint": "pnpm --filter \"@saakshi/*\" lint",
+    "dev": "pnpm --filter @pluribus/web dev",
+    "build": "pnpm --filter \"@pluribus/*\" build",
+    "test": "pnpm --filter \"@pluribus/*\" test",
+    "lint": "pnpm --filter \"@pluribus/*\" lint",
     "setup:cld": "tsx scripts/cloudinary-setup.ts",
     "eval:dup": "tsx scripts/eval/dup-eval.ts",
     "eval:assign": "tsx scripts/eval/assign-eval.ts",
@@ -19,9 +19,9 @@
     "typescript": "^5.7.3"
   },
   "dependencies": {
-    "@saakshi/ai": "workspace:*",
-    "@saakshi/core": "workspace:*",
-    "@saakshi/db": "workspace:*",
-    "@saakshi/media": "workspace:*"
+    "@pluribus/ai": "workspace:*",
+    "@pluribus/core": "workspace:*",
+    "@pluribus/db": "workspace:*",
+    "@pluribus/media": "workspace:*"
   }
 }

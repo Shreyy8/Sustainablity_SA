@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { store } from "@saakshi/db";
-import { runAssetPipeline } from "@saakshi/core";
-import { buildThumbnailUrl, buildReportUrl, buildPublicUrl } from "@saakshi/media";
+import { store } from "@pluribus/db";
+import { runAssetPipeline } from "@pluribus/core";
+import { buildThumbnailUrl, buildReportUrl, buildPublicUrl } from "@pluribus/media";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
       {
         id: assetId,
         shortId,
-        publicId: body.publicId || `saakshi/uploads/${shortId}`,
+        publicId: body.publicId || `pluribus/uploads/${shortId}`,
         version: body.version || Math.floor(Date.now() / 1000),
         secureUrl: body.secureUrl || "https://images.unsplash.com/photo-1541888946425-d0fbb186c5f7?auto=format&fit=crop&w=1200&q=80",
         resourceType: body.resourceType || "image",

@@ -8,16 +8,16 @@ importers:
 
   .:
     dependencies:
-      '@saakshi/ai':
+      '@pluribus/ai':
         specifier: workspace:*
         version: link:packages/ai
-      '@saakshi/core':
+      '@pluribus/core':
         specifier: workspace:*
         version: link:packages/core
-      '@saakshi/db':
+      '@pluribus/db':
         specifier: workspace:*
         version: link:packages/db
-      '@saakshi/media':
+      '@pluribus/media':
         specifier: workspace:*
         version: link:packages/media
     devDependencies:
@@ -33,16 +33,16 @@ importers:
 
   apps/web:
     dependencies:
-      '@saakshi/ai':
+      '@pluribus/ai':
         specifier: workspace:*
         version: link:../../packages/ai
-      '@saakshi/core':
+      '@pluribus/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@saakshi/db':
+      '@pluribus/db':
         specifier: workspace:*
         version: link:../../packages/db
-      '@saakshi/media':
+      '@pluribus/media':
         specifier: workspace:*
         version: link:../../packages/media
       canvas-confetti:
@@ -113,13 +113,13 @@ importers:
 
   packages/db:
     dependencies:
-      '@saakshi/ai':
+      '@pluribus/ai':
         specifier: workspace:*
         version: link:../ai
-      '@saakshi/core':
+      '@pluribus/core':
         specifier: workspace:*
         version: link:../core
-      '@saakshi/media':
+      '@pluribus/media':
         specifier: workspace:*
         version: link:../media
     devDependencies:

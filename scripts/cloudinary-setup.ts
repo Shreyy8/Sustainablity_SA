@@ -75,7 +75,7 @@ const NAMED_TRANSFORMATIONS = {
 
 const UPLOAD_PRESETS = [
   {
-    name: "saakshi_field_signed",
+    name: "pluribus_field_signed",
     unsigned: false,
     overwrite: false,
     unique_filename: true,
@@ -88,24 +88,24 @@ const UPLOAD_PRESETS = [
     detection: "coco_v2",
     ocr: "adv_ocr",
     moderation: "aws_rek",
-    notification_url: process.env.CLOUDINARY_NOTIFICATION_URL || "https://api.saakshi.app/webhooks/cloudinary",
+    notification_url: process.env.CLOUDINARY_NOTIFICATION_URL || "https://api.pluribus.app/webhooks/cloudinary",
     eager_async: true,
     eager: "t_sk_thumb|t_sk_report"
   },
   {
-    name: "saakshi_video_signed",
+    name: "pluribus_video_signed",
     unsigned: false,
     overwrite: false,
     resource_type: "video",
     raw_convert: "google_speech:vtt",
-    notification_url: process.env.CLOUDINARY_NOTIFICATION_URL || "https://api.saakshi.app/webhooks/cloudinary",
+    notification_url: process.env.CLOUDINARY_NOTIFICATION_URL || "https://api.pluribus.app/webhooks/cloudinary",
     eager_async: true,
     eager: "e_preview:duration_12/c_fill,g_auto,ar_9:16,w_720/q_auto|so_auto/c_fill,g_auto,w_400,h_300/f_jpg"
   }
 ];
 
 async function setupCloudinary() {
-  console.log("=== SAAKSHI CLOUDINARY PROVISIONING ===");
+  console.log("=== PLURIBUS CLOUDINARY PROVISIONING ===");
   console.log(`Target Cloud: ${cloudName || "[Mock/Unconfigured]"}`);
 
   if (!apiKey || !apiSecret || apiSecret === "mock-api-secret") {

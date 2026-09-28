@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { store } from "@saakshi/db";
+import { store } from "@pluribus/db";
 import { runAssetPipeline } from "../src/pipeline/processAsset.js";
 import { selectEvidenceForReport, buildFactsBundle, validateCitations } from "../src/report/index.js";
-import { generateReportNarrative } from "@saakshi/ai";
+import { generateReportNarrative } from "@pluribus/ai";
 import { generateStoryScript } from "../src/story/script.js";
-import { buildCompositeUrl, buildReelVideoUrl } from "@saakshi/media";
+import { buildCompositeUrl, buildReelVideoUrl } from "@pluribus/media";
 
 describe("Backend Store and Pipeline Integration", () => {
   it("should initialize store with realistic Indian CSR data", () => {
@@ -28,7 +28,7 @@ describe("Backend Store and Pipeline Integration", () => {
     const incomingUpload = {
       id: "test-pipeline-ast",
       shortId: "TEST-01",
-      publicId: "saakshi/demo/test_handpump",
+      publicId: "pluribus/demo/test_handpump",
       version: 1711209999,
       secureUrl: "https://images.unsplash.com/photo-1541888946425-d0fbb186c5f7",
       capturedAt: "2026-03-20T10:00:00Z",
@@ -129,7 +129,7 @@ describe("Backend Store and Pipeline Integration", () => {
 
     const reelUrl = buildReelVideoUrl(
       story.beats.map((b) => ({
-        publicId: "saakshi/demo/clip",
+        publicId: "pluribus/demo/clip",
         durationSeconds: b.durationSeconds
       }))
     );
@@ -140,8 +140,8 @@ describe("Backend Store and Pipeline Integration", () => {
 
   it("should build valid signed before/after composite URL with face blur", () => {
     const url = buildCompositeUrl(
-      { publicId: "saakshi/before_image", version: 100 },
-      { publicId: "saakshi/after_image", version: 101 },
+      { publicId: "pluribus/before_image", version: 100 },
+      { publicId: "pluribus/after_image", version: 101 },
       { beforeDate: "2025-06-01", afterDate: "2025-10-18", blurFaces: true }
     );
 

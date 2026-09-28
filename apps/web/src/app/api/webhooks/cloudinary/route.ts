@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { verifyWebhookSignature, type CldNotification, buildThumbnailUrl, buildReportUrl, buildPublicUrl } from "@saakshi/media";
-import { runAssetPipeline } from "@saakshi/core";
-import { store } from "@saakshi/db";
+import { verifyWebhookSignature, type CldNotification, buildThumbnailUrl, buildReportUrl, buildPublicUrl } from "@pluribus/media";
+import { runAssetPipeline } from "@pluribus/core";
+import { store } from "@pluribus/db";
 
 export async function POST(req: Request) {
   try {

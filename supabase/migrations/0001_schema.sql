@@ -1,5 +1,5 @@
 -- ============================================================================
--- SAAKSHI: AI-Powered CSR Evidence Vault
+-- PLURIBUS: AI-Powered CSR Evidence Vault
 -- Supabase / Postgres 16 Schema with PostGIS, pgvector, and RLS
 -- ============================================================================
 

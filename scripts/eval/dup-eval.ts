@@ -3,7 +3,7 @@
  * Tests duplicate detection algorithm against planted duplicates, cropped variants,
  * and verifies burst-shot false positive protection.
  */
-import { duplicateCheck, computeTrustScore } from "@saakshi/core";
+import { duplicateCheck, computeTrustScore } from "@pluribus/core";
 
 interface TestCase {
   name: string;
@@ -119,7 +119,7 @@ const TEST_CASES: TestCase[] = [
 
 function runDuplicateEvaluation() {
   console.log("==================================================");
-  console.log("   SAAKSHI DUPLICATE DETECTION EVALUATION HARNESS ");
+  console.log("   PLURIBUS DUPLICATE DETECTION EVALUATION HARNESS ");
   console.log("==================================================\n");
 
   let truePositives = 0;

@@ -2,9 +2,9 @@
  * Search Relevance Evaluation Script
  * Evaluates top-5 hit rate on 20 golden demo queries using hybrid query parsing and search.
  */
-import { parseSearchQuery, generateEmbedding } from "@saakshi/ai";
-import { cosineSimilarity } from "@saakshi/core";
-import { store } from "@saakshi/db";
+import { parseSearchQuery, generateEmbedding } from "@pluribus/ai";
+import { cosineSimilarity } from "@pluribus/core";
+import { store } from "@pluribus/db";
 
 interface GoldenQuery {
   id: number;
@@ -166,7 +166,7 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
 
 async function runSearchEvaluation() {
   console.log("==================================================");
-  console.log("     SAAKSHI SEARCH RELEVANCE EVALUATION HARNESS   ");
+  console.log("     PLURIBUS SEARCH RELEVANCE EVALUATION HARNESS   ");
   console.log("==================================================\n");
 
   const allAssets = store.getAssets();
