@@ -1,0 +1,27 @@
+{
+  "name": "saakshi-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter @saakshi/web dev",
+    "build": "pnpm --filter \"@saakshi/*\" build",
+    "test": "pnpm --filter \"@saakshi/*\" test",
+    "lint": "pnpm --filter \"@saakshi/*\" lint",
+    "setup:cld": "tsx scripts/cloudinary-setup.ts",
+    "eval:dup": "tsx scripts/eval/dup-eval.ts",
+    "eval:assign": "tsx scripts/eval/assign-eval.ts",
+    "eval:search": "tsx scripts/eval/search-eval.ts",
+    "eval:all": "tsx scripts/eval/dup-eval.ts && tsx scripts/eval/assign-eval.ts && tsx scripts/eval/search-eval.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.4",
+    "tsx": "^4.19.3",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "@saakshi/ai": "workspace:*",
+    "@saakshi/core": "workspace:*",
+    "@saakshi/db": "workspace:*",
+    "@saakshi/media": "workspace:*"
+  }
+}
