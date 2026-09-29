@@ -64,10 +64,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const data = await res.json();
         if (data?.session) {
           setSession(data.session);
+          return;
         }
       }
+      setSession(null);
     } catch (err) {
       console.error("Auth session fetch error:", err);
+      setSession(null);
     } finally {
       setLoading(false);
     }
@@ -218,12 +221,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Logout session
   const logout = async () => {
     try {
-      await fetch("/api/auth/session", { method: "DELETE" });
+      await Promise.allSettled([
+        fetch("/api/auth/logout", { method: "POST" }),
+        fetch("/api/auth/session", { method: "DELETE" })
+      ]);
       setSession(null);
-      // Auto-reconnect default session
-      await refreshSession();
+      if (typeof window !== "undefined") {
+        sessionStorage.clear();
+      }
     } catch (err) {
       console.error("Logout error:", err);
+    } finally {
+      setSession(null);
     }
   };
 

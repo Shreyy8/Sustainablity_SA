@@ -78,26 +78,6 @@ function LoginPageContent() {
     }
   };
 
-  const handleQuickLogin = async (userId: string) => {
-    setError(null);
-    setLoading(true);
-    try {
-      const ok = await switchUser(userId);
-      if (ok) {
-        setSuccessNotice("Session established! Loading dashboard...");
-        setTimeout(() => {
-          router.push("/dashboard");
-        }, 500);
-      } else {
-        setError("Failed to switch user account.");
-      }
-    } catch (err: any) {
-      setError(err.message || "Quick login failed.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -279,34 +259,25 @@ function LoginPageContent() {
               </button>
             </form>
 
-            {/* Quick Demo Identities 1-Click Access */}
+            {/* Enterprise Security Notice & Onboarding Link */}
             <div className="pt-4 border-t border-[#262626] space-y-3">
-              <div className="flex items-center justify-between text-[10px] text-[#8e9192] uppercase">
-                <span className="flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 text-emerald-400" />
-                  OR INSTANT 1-CLICK AUTHENTIC CSR ROLES:
-                </span>
-                <span>VERIFIED IDENTITIES</span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {users.map((u) => (
-                  <button
-                    key={u.id}
-                    type="button"
-                    onClick={() => handleQuickLogin(u.id)}
-                    disabled={loading}
-                    className="p-2.5 bg-[#0e0e0e] hover:bg-[#1a1a1a] border border-[#333] hover:border-[#666] text-left transition-colors cursor-pointer group"
+              <div className="bg-[#181818] border border-[#333] p-3 text-[11px] text-[#8e9192] space-y-2">
+                <div className="flex items-center gap-1.5 text-white font-bold uppercase">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                  <span>ENTERPRISE RBAC &amp; TENANT ISOLATION</span>
+                </div>
+                <p>
+                  Each device and role requires explicit credential authentication. Shared devices must perform a clean logout before another user authenticates.
+                </p>
+                <div className="pt-1 flex items-center justify-between">
+                  <span className="text-[#666]">Registering a new organization?</span>
+                  <Link
+                    href="/onboarding"
+                    className="text-emerald-400 hover:underline font-bold uppercase"
                   >
-                    <div className="text-white font-bold group-hover:text-emerald-400 transition-colors">
-                      {u.name}
-                    </div>
-                    <div className="text-[10px] text-[#8e9192] flex items-center justify-between mt-0.5">
-                      <span>[{u.role.replace("_", " ")}]</span>
-                      <span className="truncate max-w-[120px]">{u.orgName}</span>
-                    </div>
-                  </button>
-                ))}
+                    FIRM ONBOARDING &rarr;
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
