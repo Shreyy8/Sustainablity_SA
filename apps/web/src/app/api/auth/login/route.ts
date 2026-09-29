@@ -5,18 +5,35 @@ import { createSessionToken, buildSessionCookieHeader, UserSessionPayload } from
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { userId, email, reusableData } = body;
+    const { userId, email, password, reusableData } = body;
 
     const users = store.getUsers();
-    let user = users.find((u) => u.id === userId || (email && u.email === email));
+    let user: any = undefined;
 
-    // Default to primary administrator if not specified
-    if (!user) {
+    if (email) {
+      user = store.getUserByEmail(email);
+      if (!user) {
+        return NextResponse.json(
+          { error: "No user found with this email address. Please register an account." },
+          { status: 401 }
+        );
+      }
+
+      // Check password if set on user
+      if (user.password && password && user.password !== password) {
+        return NextResponse.json(
+          { error: "Invalid password. Please check your credentials." },
+          { status: 401 }
+        );
+      }
+    } else if (userId) {
+      user = store.getUserById(userId);
+    } else {
       user = users[0];
     }
 
     if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json({ error: "User account not found" }, { status: 404 });
     }
 
     const org = store.getOrgById(user.orgId);

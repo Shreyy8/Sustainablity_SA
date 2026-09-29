@@ -1,0 +1,17 @@
+{
+  "name": "Pluribus CSR Vault",
+  "short_name": "Pluribus",
+  "description": "AI-Powered CSR Evidence Vault for Companies Act 2013 Section 135 & Schedule VII",
+  "start_url": "/capture",
+  "display": "standalone",
+  "background_color": "#101010",
+  "theme_color": "#101010",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

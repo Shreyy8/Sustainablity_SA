@@ -13,6 +13,22 @@ export interface Organization {
   slug: string;
   logoPublicId?: string;
   createdAt: string;
+  // Statutory and Compliance fields
+  cin?: string;
+  darpanId?: string;
+  csr1Number?: string;
+  pan?: string;
+  gstin?: string;
+  section12A?: string;
+  section80G?: string;
+  fcraStatus?: string;
+  sectors?: string[];
+  states?: string[];
+  annualBudgetInr?: number;
+  contactName?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  complianceStatus?: "verified" | "pending_review" | "needs_clarification";
 }
 
 export interface AppUser {
@@ -23,6 +39,7 @@ export interface AppUser {
   email?: string;
   phone?: string;
   language: string;
+  password?: string;
 }
 
 export interface Grant {

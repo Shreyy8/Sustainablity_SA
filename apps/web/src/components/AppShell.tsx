@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   ShieldAlert,
   ShieldCheck,
@@ -23,6 +23,11 @@ import {
   Trash2,
   CheckCircle2,
   UserCheck,
+  UserPlus,
+  LogIn,
+  LogOut,
+  Globe,
+  Building,
   Sparkles
 } from "lucide-react";
 import { AuthProvider, useAuth } from "../context/AuthContext";
@@ -38,7 +43,13 @@ interface NavItem {
 
 function AppShellContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const { session, users, tenants, switchUser, switchTenant, logout, refreshSession } = useAuth();
+
+  // If on login or register screen, render full-bleed clean auth view
+  if (pathname === "/login" || pathname === "/register") {
+    return <main className="min-h-screen bg-[#101010] text-[#e2e2e2]">{children}</main>;
+  }
 
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [pendingTriageCount, setPendingTriageCount] = useState(0);
@@ -116,6 +127,7 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
     .toUpperCase();
 
   const navItems: NavItem[] = [
+    { id: "community", href: "/community", label: "00 // COMMUNITY HUB", icon: Globe },
     { id: "overview", href: "/dashboard", label: "01 // OVERVIEW", icon: LayoutDashboard },
     { id: "projects", href: "/projects", label: "02 // GRANTS & SITES", icon: FolderGit2 },
     { id: "capture", href: "/capture", label: "03 // FIELD CAPTURE", icon: Camera },
@@ -130,7 +142,8 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
     { id: "search", href: "/search", label: "05 // HYBRID SEARCH", icon: Search },
     { id: "comparisons", href: "/pairs", label: "06 // COMPARISONS", icon: GitCompare },
     { id: "reports", href: "/reports", label: "07 // AUDIT REPORTS", icon: FileText },
-    { id: "stories", href: "/stories", label: "08 // STORY STUDIO", icon: Film }
+    { id: "stories", href: "/stories", label: "08 // STORY STUDIO", icon: Film },
+    { id: "onboarding", href: "/onboarding", label: "09 // FIRM ONBOARDING", icon: Building }
   ];
 
   return (
@@ -141,7 +154,7 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
         <div className="flex items-center gap-2 md:gap-3 overflow-hidden">
           <button
             onClick={() => setMobileNavOpen(!mobileNavOpen)}
-            className="md:hidden text-[#c4c7c8] hover:text-white p-1"
+            className="md:hidden text-[#c4c7c8] hover:text-white p-1 cursor-pointer"
             title="Toggle Menu"
           >
             {mobileNavOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -159,60 +172,83 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
 
           <span className="font-code text-[11px] text-[#444748] hidden md:inline">::</span>
 
-          {/* Dynamic Workspace / Tenant Selector */}
-          <div className="relative group shrink min-w-0">
-            <select
-              value={currentOrgName}
-              onChange={(e) => switchTenant(e.target.value)}
-              className="bg-[#1b1b1b] text-white border border-[#444748] hover:border-[#8e9192] font-code text-[11px] px-2 py-1 focus:outline-none cursor-pointer max-w-[190px] sm:max-w-none truncate"
+          {/* Authentic Tenant / Organization Display */}
+          {session ? (
+            <div className="flex items-center gap-1.5 bg-[#1b1b1b] border border-[#444748] px-2.5 py-1 text-[11px] font-code">
+              <span className="text-[#8e9192]">ORG:</span>
+              <span className="font-bold text-white uppercase tracking-wider truncate max-w-[140px] sm:max-w-[220px]">
+                {session.orgName}
+              </span>
+            </div>
+          ) : (
+            <Link
+              href="/community"
+              className="flex items-center gap-1.5 bg-[#1b1b1b] hover:bg-[#252525] border border-[#444748] px-2.5 py-1 text-[11px] font-code text-[#c4c7c8] hover:text-white transition-colors"
             >
-              {tenants.map((t) => (
-                <option key={t} value={t} className="bg-[#1b1b1b] text-white">
-                  WORKSPACE: {t.toUpperCase()}
-                </option>
-              ))}
-            </select>
-          </div>
+              <Globe className="w-3.5 h-3.5 text-emerald-400" />
+              <span>PUBLIC COMMUNITY DATA</span>
+            </Link>
+          )}
         </div>
 
-        {/* Role Selector & Profile Zone */}
+        {/* Profile & Auth Status Zone */}
         <div className="flex items-center gap-2 md:gap-3 shrink-0">
-          {/* JWT Token & Session Indicator Badge */}
-          <button
-            onClick={() => setSessionModalOpen(true)}
-            title="View JWT Session & Reusable Data"
-            className="flex items-center gap-1.5 bg-[#1b1b1b] hover:bg-[#282828] border border-emerald-500/40 hover:border-emerald-400 px-2 py-1 transition-colors cursor-pointer"
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-[10px] font-code font-bold text-emerald-400 tracking-wider hidden sm:inline">
-              JWT SESSION: ACTIVE
-            </span>
-            <span className="text-[10px] font-code text-[#8e9192] hidden md:inline">
-              [HS256]
-            </span>
-          </button>
+          {session ? (
+            <>
+              {/* Role Badge */}
+              <div className="hidden sm:flex items-center gap-1 bg-[#1b1b1b] border border-emerald-500/40 px-2 py-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-[10px] font-code font-bold text-emerald-400 tracking-wider uppercase">
+                  {userRoleDisplay}
+                </span>
+              </div>
 
-          {/* Dynamic User & Role Switcher */}
-          <select
-            value={session?.userId || ""}
-            onChange={(e) => switchUser(e.target.value)}
-            className="bg-[#1b1b1b] text-white border border-[#444748] hover:border-[#8e9192] font-code text-[11px] px-2 py-1 focus:outline-none cursor-pointer uppercase font-medium max-w-[150px] sm:max-w-none truncate"
-          >
-            {users.map((u) => (
-              <option key={u.id} value={u.id} className="bg-[#1b1b1b] text-white">
-                {u.name.toUpperCase()} [{u.role.replace("_", " ")}]
-              </option>
-            ))}
-          </select>
+              {/* Profile Avatar / Trigger */}
+              <button
+                onClick={() => setSessionModalOpen(true)}
+                title={`Active: ${session.name} (${userRoleDisplay})\nClick for Account & Security Menu`}
+                className="flex items-center gap-2 bg-[#1b1b1b] hover:bg-[#282828] border border-[#444748] hover:border-emerald-400 p-1 pr-2 transition-colors cursor-pointer"
+              >
+                <div className="w-6 h-6 bg-white text-[#2f3131] flex items-center justify-center font-code font-bold text-xs">
+                  {userInitials}
+                </div>
+                <span className="text-[11px] font-code text-white hidden md:inline truncate max-w-[120px]">
+                  {session.name.split(" ")[0]}
+                </span>
+                <ChevronDown className="w-3 h-3 text-[#8e9192]" />
+              </button>
 
-          {/* User Icon Avatar */}
-          <div
-            onClick={() => setSessionModalOpen(true)}
-            title={`Active User: ${session?.name || "User"} (${userRoleDisplay})\nClick to view JWT session`}
-            className="w-7 h-7 bg-white text-[#2f3131] hover:bg-emerald-400 hover:text-black transition-colors flex items-center justify-center shrink-0 font-code font-bold text-xs shadow cursor-pointer"
-          >
-            {userInitials}
-          </div>
+              {/* Direct Logout Button */}
+              <button
+                onClick={async () => {
+                  await logout();
+                  router.push("/login");
+                }}
+                title="Secure Sign Out"
+                className="flex items-center gap-1 bg-red-950/40 hover:bg-red-900 border border-red-800 text-red-200 text-[10px] font-code px-2 py-1 transition-colors cursor-pointer"
+              >
+                <LogOut className="w-3 h-3" />
+                <span className="hidden sm:inline">LOGOUT</span>
+              </button>
+            </>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Link
+                href="/login"
+                className="flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-400 text-black font-code font-bold text-[11px] px-3 py-1 transition-colors cursor-pointer"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                <span>SIGN IN</span>
+              </Link>
+              <Link
+                href="/onboarding"
+                className="hidden sm:flex items-center gap-1.5 bg-[#1b1b1b] hover:bg-[#252525] border border-[#444748] text-white font-code text-[11px] px-2.5 py-1 transition-colors"
+              >
+                <Building className="w-3.5 h-3.5 text-emerald-400" />
+                <span>ONBOARD FIRM</span>
+              </Link>
+            </div>
+          )}
         </div>
       </header>
 
@@ -478,9 +514,29 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
               </button>
 
               <div className="flex items-center gap-2">
+                <Link
+                  href="/login"
+                  onClick={() => setSessionModalOpen(false)}
+                  className="bg-[#222] hover:bg-[#333] border border-[#444] text-white px-3 py-1.5 font-bold cursor-pointer transition-colors flex items-center gap-1.5"
+                >
+                  <LogIn className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>SIGN IN</span>
+                </Link>
+                <Link
+                  href="/login?tab=register"
+                  onClick={() => setSessionModalOpen(false)}
+                  className="bg-[#222] hover:bg-[#333] border border-[#444] text-white px-3 py-1.5 font-bold cursor-pointer transition-colors flex items-center gap-1.5"
+                >
+                  <UserPlus className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>REGISTER</span>
+                </Link>
                 <button
-                  onClick={logout}
-                  className="bg-[#222] hover:bg-[#333] text-white px-3 py-1.5 font-bold cursor-pointer transition-colors"
+                  onClick={async () => {
+                    await logout();
+                    setSessionModalOpen(false);
+                    router.push("/login");
+                  }}
+                  className="bg-red-900/60 hover:bg-red-900 border border-red-700 text-red-100 px-3 py-1.5 font-bold cursor-pointer transition-colors"
                 >
                   LOGOUT
                 </button>
