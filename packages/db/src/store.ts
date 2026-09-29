@@ -394,7 +394,7 @@ class PluribusStore {
   }
 
   // Audit Log
-  private logAudit(entry: Omit<AuditLog, "id" | "at">) {
+  logAudit(entry: Omit<AuditLog, "id" | "at">) {
     this.auditLogs.unshift({
       id: this.auditLogs.length + 1,
       ...entry,
