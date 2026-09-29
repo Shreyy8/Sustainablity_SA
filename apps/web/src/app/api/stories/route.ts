@@ -71,7 +71,7 @@ export async function POST(req: Request) {
         publicId: a?.cldPublicId || "pluribus/demo/sample",
         durationSeconds: b.durationSeconds,
         headline: b.headline,
-        resourceType: a?.resourceType || "image"
+        resourceType: (a?.resourceType === "video" ? "video" : "image") as "image" | "video"
       };
     });
 

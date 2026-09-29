@@ -10,6 +10,7 @@ export interface PhashMatch {
 
 export interface DuplicateCheckAsset {
   id: string;
+  shortId?: string;
   projectId?: string;
   siteId?: string;
   milestoneId?: string;

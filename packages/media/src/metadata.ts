@@ -13,7 +13,7 @@ export interface PluribusStructuredMetadata {
   sk_trust?: number;
   sk_trust_band?: "verified" | "review" | "flagged";
   sk_consent?: "none" | "verbal" | "written";
-  sk_status?: "pending" | "assigned" | "rejected";
+  sk_status?: "pending" | "assigned" | "review" | "rejected";
 }
 
 export async function writeBackMetadata(
@@ -33,6 +33,35 @@ export async function writeBackMetadata(
     return true;
   } catch (err) {
     console.warn(`[Cloudinary Metadata Writeback] Failed for ${publicId}:`, err);
+    return false;
+  }
+}
+
+export interface UpdateMetadataOptions {
+  publicId: string;
+  metadata: PluribusStructuredMetadata;
+  tagsToAdd?: string[];
+  tagsToRemove?: string[];
+}
+
+export async function updateAssetMetadata(options: UpdateMetadataOptions): Promise<boolean> {
+  try {
+    if (process.env.CLOUDINARY_API_SECRET && process.env.CLOUDINARY_API_SECRET !== "mock-api-secret") {
+      await cld.uploader.update_metadata(options.metadata as any, [options.publicId]);
+      if (options.tagsToAdd && options.tagsToAdd.length > 0) {
+        for (const tag of options.tagsToAdd) {
+          await cld.uploader.add_tag(tag, [options.publicId]);
+        }
+      }
+      if (options.tagsToRemove && options.tagsToRemove.length > 0) {
+        for (const tag of options.tagsToRemove) {
+          await cld.uploader.remove_tag(tag, [options.publicId]);
+        }
+      }
+    }
+    return true;
+  } catch (err) {
+    console.warn(`[Cloudinary Metadata Writeback] Failed for ${options.publicId}:`, err);
     return false;
   }
 }

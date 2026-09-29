@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { verifyWebhookSignature, type CldNotification, buildThumbnailUrl, buildReportUrl, buildPublicUrl } from "@pluribus/media";
 import { runAssetPipeline } from "@pluribus/core";
 import { store } from "@pluribus/db";
+import { inngest } from "@/inngest/client";
 
 export async function POST(req: Request) {
   try {
@@ -62,6 +63,38 @@ export async function POST(req: Request) {
       // Save processed asset to store
       const saved = store.insertAsset(pipelineResult.asset as any);
 
+      // Trigger Inngest background event (idempotent key on asset:version)
+      try {
+        await inngest.send({
+          name: "asset/uploaded",
+          id: `${payload.asset_id || assetId}:${payload.version}`,
+          data: {
+            asset: {
+              id: assetId,
+              shortId,
+              publicId,
+              version: payload.version,
+              secureUrl: payload.secure_url || payload.url || "",
+              resourceType: (payload.resource_type as any) || "image",
+              format: payload.format,
+              bytes: payload.bytes,
+              width: payload.width,
+              height: payload.height,
+              capturedAt,
+              uploadedAt: new Date().toISOString(),
+              location: lat !== undefined && lng !== undefined ? { latitude: lat, longitude: lng, accuracy: gpsAccuracy } : undefined,
+              exif: payload.image_metadata,
+              phash: payload.phash,
+              tags: payload.tags || [],
+              qualityScore: payload.quality_analysis?.focus ?? 0.9,
+              uploaderId: context.uploader_id
+            }
+          }
+        });
+      } catch (inngestErr: any) {
+        console.warn("Inngest event dispatch skipped/offline:", inngestErr.message);
+      }
+
       // Record derivative URLs
       store.recordDerivative({
         id: `der-${Date.now()}-thumb`,
@@ -97,7 +130,7 @@ export async function POST(req: Request) {
       if (pipelineResult.pairCandidate) {
         store.insertPair({
           id: `pair-${Date.now()}`,
-          siteId: pipelineResult.pairCandidate.afterAsset.siteId,
+          siteId: pipelineResult.pairCandidate.afterAsset.siteId || "",
           milestoneId: pipelineResult.pairCandidate.afterAsset.milestoneId,
           beforeAssetId: pipelineResult.pairCandidate.beforeAsset.id,
           afterAssetId: pipelineResult.pairCandidate.afterAsset.id,

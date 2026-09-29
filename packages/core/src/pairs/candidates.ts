@@ -1,7 +1,7 @@
 export interface PairAsset {
   id: string;
   shortId?: string;
-  siteId: string;
+  siteId?: string;
   milestoneId?: string;
   capturedAt: string | Date;
   activities?: string[];
@@ -54,7 +54,7 @@ export function findPairCandidates(
   for (const prev of historicalAssets) {
     if (prev.id === targetAsset.id) continue;
     // Must be same site
-    if (prev.siteId !== targetAsset.siteId) continue;
+    if (!prev.siteId || !targetAsset.siteId || prev.siteId !== targetAsset.siteId) continue;
 
     const prevTime = new Date(prev.capturedAt).getTime();
     const gapMs = targetTime - prevTime;

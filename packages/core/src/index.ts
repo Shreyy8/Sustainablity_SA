@@ -28,3 +28,7 @@ export * from "./story/script.js";
 
 // Pipeline
 export * from "./pipeline/processAsset.js";
+
+// Security
+export * from "./security/rateLimit.js";
+

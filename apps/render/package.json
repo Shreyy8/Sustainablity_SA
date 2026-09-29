@@ -1,0 +1,26 @@
+{
+  "name": "@pluribus/render",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@pluribus/core": "workspace:*",
+    "@pluribus/media": "workspace:*",
+    "express": "^4.21.2",
+    "cors": "^2.8.5",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/cors": "^2.8.17",
+    "@types/qrcode": "^1.5.5",
+    "@types/node": "^22.13.4",
+    "tsx": "^4.19.3",
+    "typescript": "^5.7.3"
+  }
+}

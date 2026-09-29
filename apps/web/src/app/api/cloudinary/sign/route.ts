@@ -1,8 +1,19 @@
 import { NextResponse } from "next/server";
 import { signUploadRequest } from "@pluribus/media";
+import { rateLimit } from "@pluribus/core";
 
 export async function POST(req: Request) {
   try {
+    const ip = req.headers.get("x-forwarded-for") || "client";
+    const limiter = await rateLimit(`sign:${ip}`, { maxRequests: 120, windowSeconds: 60 });
+
+    if (!limiter.success) {
+      return NextResponse.json(
+        { error: "Too many upload sign requests. Rate limit exceeded." },
+        { status: 429 }
+      );
+    }
+
     const body = await req.json();
     const { paramsToSign, projectId } = body;
 

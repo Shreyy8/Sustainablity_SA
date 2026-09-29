@@ -1,10 +1,16 @@
 import { NextResponse } from "next/server";
 import { parseSearchQuery, generateEmbedding } from "@pluribus/ai";
-import { cosineSimilarity } from "@pluribus/core";
+import { cosineSimilarity, rateLimit } from "@pluribus/core";
 import { store } from "@pluribus/db";
 
 export async function GET(req: Request) {
   try {
+    const ip = req.headers.get("x-forwarded-for") || "client";
+    const limiter = await rateLimit(`search:${ip}`, { maxRequests: 60, windowSeconds: 60 });
+    if (!limiter.success) {
+      return NextResponse.json({ error: "Too many search requests. Please throttle." }, { status: 429 });
+    }
+
     const { searchParams } = new URL(req.url);
     const query = searchParams.get("q") || "";
     const filterActivity = searchParams.get("activity") || undefined;

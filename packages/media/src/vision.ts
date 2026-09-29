@@ -39,7 +39,7 @@ export async function visionTag(
       });
 
       if (res.ok) {
-        const data = await res.json();
+        const data: any = await res.json();
         if (data?.tags) {
           return data.tags.map((t: any) => ({
             key: t.name || t.tag,
