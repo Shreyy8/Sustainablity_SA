@@ -53,7 +53,7 @@ export async function POST(req: Request) {
         milestones: pMilestones.map((m) => ({
           id: m.id,
           name: m.name,
-          expectedDate: m.expectedDate,
+          expectedDate: m.expectedDate || m.targetDate || "2026-03-31",
           evidenced: pAssets.some((a) => a.milestoneId === m.id),
           evidenceAssetCount: pAssets.filter((a) => a.milestoneId === m.id).length
         }))

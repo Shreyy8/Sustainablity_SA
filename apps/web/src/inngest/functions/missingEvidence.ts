@@ -21,7 +21,9 @@ export const missingEvidenceFunction = inngest.createFunction(
       const flaggedList: any[] = [];
 
       for (const ms of milestones) {
-        const expectedDate = new Date(ms.expectedDate);
+        const dateStr = ms.expectedDate || ms.targetDate;
+        if (!dateStr) continue;
+        const expectedDate = new Date(dateStr);
         if (expectedDate < now) {
           // Check verified assets
           const verifiedAssets = assets.filter(

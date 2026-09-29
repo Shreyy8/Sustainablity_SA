@@ -41,3 +41,33 @@ export async function GET(req: Request) {
     items: enriched
   });
 }
+
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+    const { assetId, action, notes, reassignSiteId } = body;
+
+    if (!assetId || !action) {
+      return NextResponse.json({ error: "Missing assetId or action" }, { status: 400 });
+    }
+
+    const updated = store.adjudicateAsset(assetId, action, notes, reassignSiteId);
+    if (!updated) {
+      return NextResponse.json({ error: "Asset not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({
+      success: true,
+      asset: updated,
+      counts: {
+        all: store.getReviewQueue("all").length,
+        unassigned: store.getReviewQueue("unassigned").length,
+        low_trust: store.getReviewQueue("low_trust").length,
+        duplicate: store.getReviewQueue("duplicate").length
+      }
+    });
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message || "Adjudication failed" }, { status: 500 });
+  }
+}
+

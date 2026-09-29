@@ -169,6 +169,10 @@ async function runSearchEvaluation() {
   console.log("     PLURIBUS SEARCH RELEVANCE EVALUATION HARNESS   ");
   console.log("==================================================\n");
 
+  if (store.getAssets().length === 0) {
+    store.loadSampleData();
+  }
+
   const allAssets = store.getAssets();
   const projects = store.getProjects();
   const sites = store.getSites();

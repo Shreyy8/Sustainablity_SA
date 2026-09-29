@@ -1,0 +1,7 @@
+{
+  "name": "Pluribus Evidence Vault",
+  "description": "Statutory MCA Section 135 CSR forensic compliance ledger, field capture PWA, provenance lineage DAG, duplicate fraud detector, and audit report generator.",
+  "requestFramePermissions": ["camera", "geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

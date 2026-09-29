@@ -33,12 +33,42 @@ class PluribusStore {
   private projects: Project[] = [...SEED_PROJECTS];
   private sites: Site[] = [...SEED_SITES];
   private milestones: Milestone[] = [...SEED_MILESTONES];
-  private assets: Asset[] = [...SEED_ASSETS];
-  private pairs: BeforeAfterPair[] = [...SEED_PAIRS];
-  private derivatives: Derivative[] = [...SEED_DERIVATIVES];
-  private reports: Report[] = [...SEED_REPORTS];
-  private stories: Story[] = [...SEED_STORIES];
+  private assets: Asset[] = [];
+  private pairs: BeforeAfterPair[] = [];
+  private derivatives: Derivative[] = [];
+  private reports: Report[] = [];
+  private stories: Story[] = [];
   private auditLogs: AuditLog[] = [];
+
+  constructor() {
+    const isTest =
+      typeof process !== "undefined" &&
+      (process.env.NODE_ENV === "test" || Boolean(process.env.VITEST));
+
+    if (isTest || (typeof process !== "undefined" && process.env.LOAD_SAMPLE_DATA === "true")) {
+      this.loadSampleData();
+    }
+  }
+
+  loadSampleData() {
+    this.assets = [...SEED_ASSETS];
+    this.pairs = [...SEED_PAIRS];
+    this.derivatives = [...SEED_DERIVATIVES];
+    this.reports = [...SEED_REPORTS];
+    this.stories = [...SEED_STORIES];
+  }
+
+  clearSampleData() {
+    this.assets = [];
+    this.pairs = [];
+    this.derivatives = [];
+    this.reports = [];
+    this.stories = [];
+  }
+
+  isSampleDataLoaded(): boolean {
+    return this.assets.some((a) => a.id.startsWith("ast-00") || a.id === "ast-010");
+  }
 
   // Organizations
   getOrgs(): Organization[] {
@@ -55,6 +85,10 @@ class PluribusStore {
   getUserById(id: string): AppUser | undefined {
     return this.users.find((u) => u.id === id);
   }
+  insertUser(user: AppUser): AppUser {
+    this.users.push(user);
+    return user;
+  }
 
   // Grants
   getGrants(): Grant[] {
@@ -63,6 +97,10 @@ class PluribusStore {
   getGrantById(id: string): Grant | undefined {
     return this.grants.find((g) => g.id === id);
   }
+  insertGrant(grant: Grant): Grant {
+    this.grants.unshift(grant);
+    return grant;
+  }
 
   // Projects
   getProjects(): Project[] {
@@ -70,6 +108,10 @@ class PluribusStore {
   }
   getProjectById(id: string): Project | undefined {
     return this.projects.find((p) => p.id === id);
+  }
+  insertProject(project: Project): Project {
+    this.projects.unshift(project);
+    return project;
   }
 
   // Sites
@@ -80,6 +122,10 @@ class PluribusStore {
   getSiteById(id: string): Site | undefined {
     return this.sites.find((s) => s.id === id);
   }
+  insertSite(site: Site): Site {
+    this.sites.push(site);
+    return site;
+  }
 
   // Milestones
   getMilestones(projectId?: string): Milestone[] {
@@ -88,6 +134,10 @@ class PluribusStore {
   }
   getMilestoneById(id: string): Milestone | undefined {
     return this.milestones.find((m) => m.id === id);
+  }
+  insertMilestone(milestone: Milestone): Milestone {
+    this.milestones.push(milestone);
+    return milestone;
   }
 
   // Assets
@@ -244,6 +294,53 @@ class PluribusStore {
       }
       return a.status === "review" || a.trustScore < 75;
     });
+  }
+
+  adjudicateAsset(
+    assetId: string,
+    action: "FRAUD_REJECTED" | "LEGITIMATE_DUPLICATE" | "REASSIGNED",
+    notes?: string,
+    reassignSiteId?: string
+  ): Asset | undefined {
+    const asset = this.getAssetById(assetId);
+    if (!asset) return undefined;
+
+    if (action === "FRAUD_REJECTED") {
+      asset.status = "rejected";
+      asset.trustBand = "flagged";
+      asset.trustScore = Math.min(asset.trustScore, 15);
+      asset.flaggedReason = notes || "Adjudicated as statutory fraud by auditor.";
+    } else if (action === "LEGITIMATE_DUPLICATE") {
+      asset.status = "assigned";
+      asset.trustBand = "verified";
+      asset.trustScore = Math.max(asset.trustScore, 85);
+      asset.flaggedReason = undefined;
+      // Mark duplicate check as resolved
+      const dupCheck = asset.trustChecks.find((c) => c.id === "duplicate");
+      if (dupCheck) {
+        dupCheck.penalty = 0;
+        dupCheck.severity = "info";
+        dupCheck.reason = `Adjudicated legitimate field photo: ${notes || "Confirmed distinct angle/activity"}`;
+      }
+    } else if (action === "REASSIGNED" && reassignSiteId) {
+      const newSite = this.getSiteById(reassignSiteId);
+      if (newSite) {
+        asset.siteId = newSite.id;
+        asset.projectId = newSite.projectId;
+        asset.status = "assigned";
+        asset.trustBand = "verified";
+      }
+    }
+
+    this.logAudit({
+      actor: "auditor-admin",
+      action: `triage.${action.toLowerCase()}`,
+      entity: "asset",
+      entityId: asset.id,
+      after: { status: asset.status, trustBand: asset.trustBand, notes }
+    });
+
+    return asset;
   }
 
   // Portfolio Dashboard KPIs
