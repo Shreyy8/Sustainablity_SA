@@ -3,8 +3,10 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Film, Sparkles, RefreshCw, Play, Plus, Clock, ExternalLink } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 export default function StoriesPage() {
+  const { session, updateReusableData } = useAuth();
   const [stories, setStories] = useState<any[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,7 +30,9 @@ export default function StoriesPage() {
       }
       if (projRes?.projects && projRes.projects.length > 0) {
         setProjects(projRes.projects);
-        setSelectedProjectId(projRes.projects[0].id);
+        const preferred = session?.reusableData?.lastProjectId;
+        const exists = projRes.projects.some((p: any) => p.id === preferred);
+        setSelectedProjectId(exists && preferred ? preferred : projRes.projects[0].id);
       }
     } catch (e) {
       console.error(e);

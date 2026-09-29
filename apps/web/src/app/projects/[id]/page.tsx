@@ -16,11 +16,13 @@ import {
   Plus
 } from "lucide-react";
 import { InteractiveMap } from "@/components/InteractiveMap";
+import { useAuth } from "@/context/AuthContext";
 
 export default function ProjectDetailPage() {
   const params = useParams();
   const router = useRouter();
   const id = params?.id as string;
+  const { updateReusableData } = useAuth();
 
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -33,6 +35,9 @@ export default function ProjectDetailPage() {
       if (!res.ok) throw new Error("Project not found");
       const json = await res.json();
       setData(json);
+      if (json?.project?.id) {
+        updateReusableData({ lastProjectId: json.project.id });
+      }
     } catch (e) {
       console.error(e);
     } finally {

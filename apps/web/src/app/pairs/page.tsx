@@ -64,8 +64,30 @@ export default function ComparisonsPage() {
           <span>LOADING BEFORE/AFTER CANDIDATES...</span>
         </div>
       ) : pairs.length === 0 ? (
-        <div className="p-12 text-center bg-[#0e0e0e] border border-[#333] text-[#8e9192]">
-          NO BEFORE/AFTER PAIRS CURRENTLY REGISTERED
+        <div className="p-12 text-center bg-[#0e0e0e] border border-[#333] space-y-4">
+          <div className="w-12 h-12 rounded-full bg-[#1c1c1c] border border-[#444] flex items-center justify-center mx-auto text-emerald-400">
+            <GitCompare className="w-6 h-6" />
+          </div>
+          <div>
+            <h3 className="text-white font-bold text-sm uppercase">NO TIME-SERIES PAIRS REGISTERED</h3>
+            <p className="text-[#8e9192] text-xs max-w-md mx-auto mt-1">
+              Before/After pairs establish indisputable physical progress across milestones. Upload geotagged field photos at the same project site to generate comparative evidence.
+            </p>
+          </div>
+          <div className="flex items-center justify-center gap-3 pt-2">
+            <Link
+              href="/capture"
+              className="bg-emerald-500 hover:bg-emerald-400 text-black px-4 py-2 font-bold uppercase transition-colors"
+            >
+              CAPTURE SITE EVIDENCE
+            </Link>
+            <Link
+              href="/projects"
+              className="bg-[#1b1b1b] hover:bg-[#282828] text-white border border-[#444] px-4 py-2 font-bold uppercase transition-colors"
+            >
+              VIEW SITES &amp; MILESTONES
+            </Link>
+          </div>
         </div>
       ) : (
         <div className="space-y-4">

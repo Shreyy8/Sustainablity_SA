@@ -33,12 +33,42 @@ class PluribusStore {
   private projects: Project[] = [...SEED_PROJECTS];
   private sites: Site[] = [...SEED_SITES];
   private milestones: Milestone[] = [...SEED_MILESTONES];
-  private assets: Asset[] = [...SEED_ASSETS];
-  private pairs: BeforeAfterPair[] = [...SEED_PAIRS];
-  private derivatives: Derivative[] = [...SEED_DERIVATIVES];
-  private reports: Report[] = [...SEED_REPORTS];
-  private stories: Story[] = [...SEED_STORIES];
+  private assets: Asset[] = [];
+  private pairs: BeforeAfterPair[] = [];
+  private derivatives: Derivative[] = [];
+  private reports: Report[] = [];
+  private stories: Story[] = [];
   private auditLogs: AuditLog[] = [];
+
+  constructor() {
+    const isTest =
+      typeof process !== "undefined" &&
+      (process.env.NODE_ENV === "test" || Boolean(process.env.VITEST));
+
+    if (isTest || (typeof process !== "undefined" && process.env.LOAD_SAMPLE_DATA === "true")) {
+      this.loadSampleData();
+    }
+  }
+
+  loadSampleData() {
+    this.assets = [...SEED_ASSETS];
+    this.pairs = [...SEED_PAIRS];
+    this.derivatives = [...SEED_DERIVATIVES];
+    this.reports = [...SEED_REPORTS];
+    this.stories = [...SEED_STORIES];
+  }
+
+  clearSampleData() {
+    this.assets = [];
+    this.pairs = [];
+    this.derivatives = [];
+    this.reports = [];
+    this.stories = [];
+  }
+
+  isSampleDataLoaded(): boolean {
+    return this.assets.some((a) => a.id.startsWith("ast-00") || a.id === "ast-010");
+  }
 
   // Organizations
   getOrgs(): Organization[] {
@@ -54,6 +84,10 @@ class PluribusStore {
   }
   getUserById(id: string): AppUser | undefined {
     return this.users.find((u) => u.id === id);
+  }
+  insertUser(user: AppUser): AppUser {
+    this.users.push(user);
+    return user;
   }
 
   // Grants

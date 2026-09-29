@@ -16,8 +16,10 @@ import {
   Calendar,
   Building2
 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 export default function ReportsPage() {
+  const { session } = useAuth();
   const [reports, setReports] = useState<any[]>([]);
   const [generating, setGenerating] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -25,10 +27,18 @@ export default function ReportsPage() {
   const [generatedResult, setGeneratedResult] = useState<any>(null);
   const [expandedReportId, setExpandedReportId] = useState<string | null>(null);
 
-  // Form options
+  // Dynamic form options initialized from user session
   const [template, setTemplate] = useState("Quarterly Funder Update");
   const [period, setPeriod] = useState("Q4 FY 2025-26");
-  const [corporateName, setCorporateName] = useState("Tata Sustainability Trust");
+  const [corporateName, setCorporateName] = useState(
+    session?.orgName || session?.reusableData?.tenantName || "Tata Sustainability Trust"
+  );
+
+  useEffect(() => {
+    if (session?.orgName) {
+      setCorporateName(session.orgName);
+    }
+  }, [session?.orgName]);
 
   const fetchReports = async () => {
     try {

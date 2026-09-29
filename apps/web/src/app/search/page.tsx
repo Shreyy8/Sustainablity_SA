@@ -2,10 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, Filter, ShieldCheck, Tag, MapPin, RefreshCw, ExternalLink } from "lucide-react";
+import { Search, Filter, ShieldCheck, Tag, MapPin, RefreshCw, ExternalLink, History } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
 
 export default function HybridSearchPage() {
-  const [query, setQuery] = useState("water purification barmer");
+  const { session, updateReusableData } = useAuth();
+  const [query, setQuery] = useState("");
   const [results, setResults] = useState<any[]>([]);
   const [facets, setFacets] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -23,6 +25,12 @@ export default function HybridSearchPage() {
       const data = await res.json();
       setResults(data.results || []);
       setFacets(data.facets || null);
+
+      if (searchTerm.trim()) {
+        const history = session?.reusableData?.recentSearches || [];
+        const nextHistory = Array.from(new Set([searchTerm.trim(), ...history])).slice(0, 6);
+        updateReusableData({ recentSearches: nextHistory });
+      }
     } catch (e) {
       console.error(e);
     } finally {
@@ -70,9 +78,27 @@ export default function HybridSearchPage() {
         </button>
       </div>
 
-      {/* Filter Badges */}
+      {/* Filter Badges & Recent Searches */}
       <div className="flex items-center gap-2 flex-wrap mb-4 pb-3 border-b border-[#333]">
-        <span className="text-[#8e9192]">QUICK PROMPTS:</span>
+        {session?.reusableData?.recentSearches && session.reusableData.recentSearches.length > 0 && (
+          <div className="flex items-center gap-1.5 mr-2">
+            <History className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="text-emerald-400 font-bold">RECENT:</span>
+            {session.reusableData.recentSearches.map((rec) => (
+              <button
+                key={rec}
+                onClick={() => {
+                  setQuery(rec);
+                  executeSearch(rec);
+                }}
+                className="bg-[#18261e] hover:bg-[#20362b] text-emerald-300 border border-emerald-700/60 px-2 py-0.5 text-[11px] cursor-pointer"
+              >
+                "{rec}"
+              </button>
+            ))}
+          </div>
+        )}
+        <span className="text-[#8e9192]">SUGGESTED:</span>
         {[
           "water purification barmer",
           "solar pump installation",

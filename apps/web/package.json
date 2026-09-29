@@ -16,6 +16,7 @@
     "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",
     "inngest": "^4.21.0",
+    "jose": "^6.2.12",
     "lucide-react": "^0.475.0",
     "motion": "^13.4.5",
     "next": "^15.1.7",
