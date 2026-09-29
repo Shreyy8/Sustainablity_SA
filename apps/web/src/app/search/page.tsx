@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { Search, Filter, ShieldCheck, Tag, MapPin, RefreshCw, ExternalLink } from "lucide-react";
 
 export default function HybridSearchPage() {
@@ -124,7 +125,13 @@ export default function HybridSearchPage() {
 
                   <div className="p-3 space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-white font-bold">{asset.shortId}</span>
+                      <Link
+                        href={`/assets/${asset.shortId || asset.id}`}
+                        className="text-white font-bold hover:text-emerald-300 flex items-center gap-1 cursor-pointer"
+                      >
+                        <span>{asset.shortId}</span>
+                        <ExternalLink className="w-3 h-3 text-emerald-400" />
+                      </Link>
                       <span
                         className={`px-1 text-[10px] font-bold border ${
                           asset.trustBand === "verified"
@@ -162,10 +169,16 @@ export default function HybridSearchPage() {
                   </div>
                 </div>
 
-                <div className="p-3 pt-0 border-t border-[#222]">
+                <div className="p-3 pt-0 border-t border-[#222] flex items-center justify-between">
                   <div className="text-[9px] text-[#666] truncate pt-2">
                     SHA-256: {asset.sha256 || "5f4dcc3b5aa765d61d8327deb882cf99"}
                   </div>
+                  <Link
+                    href={`/assets/${asset.shortId || asset.id}`}
+                    className="text-[10px] text-emerald-400 hover:underline pt-2 font-bold cursor-pointer"
+                  >
+                    DOSSIER &gt;
+                  </Link>
                 </div>
               </div>
             );

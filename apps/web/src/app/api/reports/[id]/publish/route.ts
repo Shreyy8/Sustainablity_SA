@@ -44,7 +44,7 @@ export async function POST(
             milestones: store.getMilestones(p.id).map((m) => ({
               id: m.id,
               title: m.name,
-              targetDate: m.expectedDate,
+              targetDate: m.expectedDate || m.targetDate || "2026-03-31",
               evidenceCount: store.getAssets({ projectId: p.id }).filter((a) => a.milestoneId === m.id).length,
               trustScore: 92,
               assets: store

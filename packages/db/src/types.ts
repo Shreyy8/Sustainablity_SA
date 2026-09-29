@@ -40,11 +40,13 @@ export interface Project {
   id: string;
   grantId: string;
   name: string;
-  description: string;
+  description?: string;
   activities: string[];
   state: string;
   district: string;
-  cldFolder: string;
+  cldFolder?: string;
+  budgetInr?: number;
+  createdAt?: string;
 }
 
 export interface Site {
@@ -59,9 +61,11 @@ export interface Milestone {
   id: string;
   projectId: string;
   name: string;
-  expectedDate: string;
-  expectedSignals: string[];
-  questions: string[];
+  expectedDate?: string;
+  targetDate?: string;
+  expectedSignals?: string[];
+  questions?: string[];
+  description?: string;
 }
 
 export interface AssetLocation {
@@ -104,6 +108,7 @@ export interface Asset {
   qualityScore?: number;
   consent: ConsentType;
   caption?: string;
+  flaggedReason?: string;
   activities?: string[];
   tags?: string[];
   ocrText?: string;

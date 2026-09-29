@@ -51,10 +51,11 @@ interface NavItem {
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const [currentTenant, setCurrentTenant] = useState<Tenant>("TATA SUSTAINABILITY TRUST :: FY 2025-26");
+  const [currentTenant, setCurrentTenant] = useState<string>("TATA SUSTAINABILITY TRUST :: FY 2025-26");
   const [currentRole, setCurrentRole] = useState<Role>("Corporate Admin");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const [pendingTriageCount, setPendingTriageCount] = useState(3);
+  const [pendingTriageCount, setPendingTriageCount] = useState(0);
+  const [tenants, setTenants] = useState<string[]>(ALL_TENANTS);
   const [currentTime, setCurrentTime] = useState("");
 
   useEffect(() => {
@@ -66,6 +67,32 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    // Fetch live triage counts
+    fetch("/api/review")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.counts?.all !== undefined) {
+          setPendingTriageCount(data.counts.all);
+        }
+      })
+      .catch(console.error);
+
+    // Fetch live organizations
+    fetch("/api/orgs")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.orgs && data.orgs.length > 0) {
+          const orgNames = data.orgs.map((o: any) => o.name);
+          setTenants(orgNames);
+          if (orgNames.length > 0 && !orgNames.includes(currentTenant)) {
+            setCurrentTenant(orgNames[0]);
+          }
+        }
+      })
+      .catch(console.error);
+  }, [pathname]);
 
   const navItems: NavItem[] = [
     { id: "overview", href: "/dashboard", label: "01 // OVERVIEW", icon: LayoutDashboard },
@@ -118,7 +145,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               onChange={(e) => setCurrentTenant(e.target.value as Tenant)}
               className="bg-[#1b1b1b] text-white border border-[#444748] hover:border-[#8e9192] font-code text-[11px] px-2 py-1 focus:outline-none cursor-pointer max-w-[190px] sm:max-w-none truncate"
             >
-              {ALL_TENANTS.map((t) => (
+              {tenants.map((t) => (
                 <option key={t} value={t} className="bg-[#1b1b1b] text-white">
                   WORKSPACE: {t}
                 </option>

@@ -502,7 +502,7 @@ export default function CorporateDashboardPage() {
                       <td className="py-3 px-3 text-right">
                         <div className="flex items-center justify-end gap-1.5">
                           <Link
-                            href="/projects"
+                            href={`/projects/${site.projectId}`}
                             className="bg-[#1b1b1b] hover:bg-white hover:text-black text-white px-2 py-1 border border-[#444] transition-colors text-[10px] font-bold"
                           >
                             DOSSIER

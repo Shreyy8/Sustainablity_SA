@@ -15,7 +15,8 @@ import {
   Smartphone,
   Sparkles,
   ArrowRight,
-  SunMedium
+  SunMedium,
+  ExternalLink
 } from "lucide-react";
 import confetti from "canvas-confetti";
 
@@ -39,11 +40,10 @@ interface PipelineResult {
 export default function FieldCapturePage() {
   const [sites, setSites] = useState<any[]>([]);
   const [selectedSiteId, setSelectedSiteId] = useState<string>("");
-  const [selectedMilestone, setSelectedMilestone] = useState<string>("MS-03");
+  const [siteMilestones, setSiteMilestones] = useState<any[]>([]);
+  const [selectedMilestone, setSelectedMilestone] = useState<string>("");
   const [witnessChecked, setWitnessChecked] = useState(true);
   const [auditNotes, setAuditNotes] = useState("");
-  const [isHighSunlight, setIsHighSunlight] = useState(true);
-  const [offlineCount, setOfflineCount] = useState(0);
   const [accuracy, setAccuracy] = useState(2.8);
   const [horizonDeg, setHorizonDeg] = useState(0.0);
   const [calibrating, setCalibrating] = useState(false);
@@ -92,6 +92,24 @@ export default function FieldCapturePage() {
   }, []);
 
   const activeSite = sites.find((s) => s.id === selectedSiteId) || sites[0];
+
+  // Fetch milestones dynamically for the active project
+  useEffect(() => {
+    if (!activeSite?.projectId) return;
+
+    fetch(`/api/projects/${activeSite.projectId}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.milestones && data.milestones.length > 0) {
+          setSiteMilestones(data.milestones);
+          setSelectedMilestone(data.milestones[0].id);
+        } else {
+          setSiteMilestones([]);
+          setSelectedMilestone("");
+        }
+      })
+      .catch(console.error);
+  }, [activeSite?.projectId]);
 
   // Start / stop live camera stream
   const toggleLiveCamera = async () => {
@@ -147,14 +165,15 @@ export default function FieldCapturePage() {
       const hash = await computeSha256(buffer);
       setLastSha256(hash);
 
-      const objectUrl = URL.createObjectURL(file);
-      setPreviewUrl(objectUrl);
-
-      // Submit to real asset pipeline
-      await submitToBackend(objectUrl, hash, file);
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const dataUrl = reader.result as string;
+        setPreviewUrl(dataUrl);
+        await submitToBackend(dataUrl, hash, file);
+      };
+      reader.readAsDataURL(file);
     } catch (err) {
       console.error("Capture processing error:", err);
-    } finally {
       setIsCapturing(false);
     }
   };
@@ -203,19 +222,18 @@ export default function FieldCapturePage() {
 
       const payload = {
         publicId: `pluribus/field_${Date.now()}`,
-        secureUrl: url.startsWith("data:")
-          ? "https://images.unsplash.com/photo-1541888946425-d0fbb186c5f7?auto=format&fit=crop&w=1200&q=80"
-          : url,
+        secureUrl: url,
         format: file ? file.type.split("/")[1] || "jpg" : "jpg",
         bytes: file ? file.size : 1850000,
         capturedAt: new Date().toISOString(),
         location: {
           latitude: lat,
-          longitude: lng
+          longitude: lng,
+          accuracy
         },
         exif: {
           make: "Sony",
-          model: "IMX766",
+          model: "IMX766 RTK",
           dateTimeOriginal: new Date().toISOString(),
           iso: 100,
           focalLength: "24mm",
@@ -224,8 +242,9 @@ export default function FieldCapturePage() {
         phash: hash.substring(0, 16),
         projectId: activeSite?.projectId || "proj-water-01",
         siteId: activeSite?.id || "site-barmer-01",
-        milestoneId: selectedMilestone,
-        uploaderId: "user-field-01"
+        milestoneId: selectedMilestone || undefined,
+        uploaderId: "user-field-01",
+        caption: auditNotes || undefined
       };
 
       const res = await fetch("/api/assets", {
@@ -237,7 +256,6 @@ export default function FieldCapturePage() {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const json: PipelineResult = await res.json();
       setPipelineResult(json);
-      setOfflineCount((c) => c + 1);
 
       if (json.trust && json.trust.score >= 80) {
         confetti({
@@ -248,103 +266,72 @@ export default function FieldCapturePage() {
       }
     } catch (err) {
       console.error("Backend pipeline error:", err);
+    } finally {
+      setIsCapturing(false);
     }
   };
 
   return (
-    <div className="flex flex-col w-full bg-[#131313] min-h-[calc(100vh-48px)] p-3 md:p-6">
+    <div className="flex flex-col w-full bg-[#131313] min-h-[calc(100vh-48px)] p-3 md:p-6 font-code text-xs">
       {/* Top Banner */}
-      <div className="w-full bg-[#0e0e0e] border border-[#444748] p-3 mb-4 flex flex-wrap items-center justify-between font-code text-xs gap-2">
+      <div className="w-full bg-[#0e0e0e] border border-[#444748] p-3 mb-4 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <Smartphone className="w-4 h-4 text-emerald-400" />
           <span className="text-white font-bold">PWA SENSOR CAPTURE ENGINE</span>
           <span className="text-[#8e9192]">//</span>
-          <span className="text-[#c4c7c8]">HARDWARE ATTESTATION ACTIVE</span>
+          <span className="text-[#c4c7c8]">HARDWARE TRUST ATTESTATION</span>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-[#8e9192]">GNSS:</span>
-          <span className="text-emerald-400 font-bold">{gpsStatus}</span>
-          <span className="text-[#444748]">|</span>
-          <span className="text-white font-bold">{offlineCount} SYNCS COMPLETED</span>
+          <span className="text-emerald-400 font-bold flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span>{gpsStatus}</span>
+          </span>
         </div>
       </div>
 
+      {/* Main Studio Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column: Viewfinder & Camera Sensor (7 cols) */}
+        {/* Left Column: Viewfinder & HUD Controls */}
         <div className="lg:col-span-7 flex flex-col space-y-4">
-          <div className="relative bg-[#000] border-2 border-[#444748] aspect-video w-full overflow-hidden flex flex-col justify-between p-3 select-none">
-            {/* Viewfinder Crosshair Overlays */}
-            <div className="absolute inset-0 pointer-events-none">
-              {/* Corner markings */}
-              <div className="absolute top-2 left-2 w-6 h-6 border-t-2 border-l-2 border-emerald-400" />
-              <div className="absolute top-2 right-2 w-6 h-6 border-t-2 border-r-2 border-emerald-400" />
-              <div className="absolute bottom-2 left-2 w-6 h-6 border-b-2 border-l-2 border-emerald-400" />
-              <div className="absolute bottom-2 right-2 w-6 h-6 border-b-2 border-r-2 border-emerald-400" />
-              {/* Center crosshair */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 pointer-events-none flex items-center justify-center">
-                <div className="w-full h-0.5 bg-emerald-400/60" />
-                <div className="h-full w-0.5 bg-emerald-400/60 absolute" />
-              </div>
+          <div className="relative bg-black border border-[#444748] aspect-video overflow-hidden flex flex-col justify-between p-3 select-none">
+            {/* Viewfinder Canvas / Stream */}
+            <div className="absolute inset-0 flex items-center justify-center bg-black">
+              {cameraStreamActive ? (
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  className="w-full h-full object-cover"
+                />
+              ) : previewUrl ? (
+                <img
+                  src={previewUrl}
+                  alt="Captured Preview"
+                  className="w-full h-full object-contain"
+                />
+              ) : (
+                <div className="text-center text-[#666] space-y-2">
+                  <Camera className="w-12 h-12 mx-auto text-[#444]" />
+                  <p>READY FOR HIGH-TRUST STATUTORY PHOTOGRAPHY</p>
+                  <p className="text-[10px] text-[#555]">
+                    Enable device camera or upload image below
+                  </p>
+                </div>
+              )}
             </div>
 
-            {/* Video or Image Preview */}
-            {previewUrl ? (
-              <img
-                src={previewUrl}
-                alt="Captured Evidence"
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-            ) : (
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                muted
-                className={`absolute inset-0 w-full h-full object-cover ${
-                  cameraStreamActive ? "block" : "hidden"
-                }`}
-              />
-            )}
-
-            {!cameraStreamActive && !previewUrl && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 bg-[#0a0a0a]/90 z-10">
-                <Camera className="w-12 h-12 text-[#666] mb-3 animate-pulse" />
-                <p className="font-code text-sm text-white font-bold">SENSOR VIEWFINDER STANDBY</p>
-                <p className="font-code text-xs text-[#8e9192] max-w-sm mt-1">
-                  Activate camera feed or choose an evidence photo from local device storage to trigger
-                  cryptographic hashing.
-                </p>
-                <div className="flex gap-2 mt-4">
-                  <button
-                    onClick={toggleLiveCamera}
-                    className="bg-emerald-500 hover:bg-emerald-400 text-black px-3 py-1.5 font-code text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5"
-                  >
-                    <Camera className="w-3.5 h-3.5" />
-                    <span>START CAMERA</span>
-                  </button>
-                  <button
-                    onClick={() => fileInputRef.current?.click()}
-                    className="bg-[#1b1b1b] hover:bg-[#333] text-white border border-[#444] px-3 py-1.5 font-code text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5"
-                  >
-                    <Upload className="w-3.5 h-3.5" />
-                    <span>CHOOSE FILE</span>
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Top HUD Telemetry */}
-            <div className="relative z-20 flex items-center justify-between text-[11px] font-code bg-[#0e0e0e]/80 border border-[#333] px-2.5 py-1">
+            {/* Viewfinder HUD Overlays */}
+            <div className="relative z-20 flex items-center justify-between text-[11px] bg-black/60 p-2 border border-[#333]">
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                <span className="text-white font-bold">SENSOR::SONY_IMX766</span>
+                <span className="text-white font-bold">SENSOR::SONY_IMX766 RTK</span>
                 <span className="text-[#888]">[f/1.8 · 12.2MP]</span>
               </div>
               <div className="flex items-center gap-3">
                 <span className="text-[#8e9192]">HORIZON:</span>
                 <span className="text-emerald-400 font-bold">{horizonDeg.toFixed(1)}°</span>
                 <span className="text-[#444]">|</span>
-                <span className="text-white">CEP: {accuracy}m</span>
+                <span className="text-white">CEP: ±{accuracy}m</span>
               </div>
             </div>
 
@@ -352,25 +339,29 @@ export default function FieldCapturePage() {
             <div className="relative z-20 flex items-center justify-between pt-2">
               <div className="flex items-center gap-2">
                 <button
+                  type="button"
                   onClick={handleRecalibrate}
                   disabled={calibrating}
-                  className="bg-[#0e0e0e]/90 hover:bg-white hover:text-black text-white px-2 py-1 border border-[#444] text-[10px] font-code font-bold transition-colors flex items-center gap-1 cursor-pointer"
+                  className="bg-[#0e0e0e]/90 hover:bg-white hover:text-black text-white px-2 py-1 border border-[#444] text-[10px] font-bold flex items-center gap-1 cursor-pointer"
                 >
                   <RefreshCw className={`w-3 h-3 ${calibrating ? "animate-spin" : ""}`} />
                   <span>CALIBRATE GNSS</span>
                 </button>
-                {cameraStreamActive && (
-                  <button
-                    onClick={toggleLiveCamera}
-                    className="bg-[#250d0d] text-red-400 hover:bg-red-500 hover:text-white px-2 py-1 border border-red-500 text-[10px] font-code font-bold cursor-pointer"
-                  >
-                    STOP CAMERA
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={toggleLiveCamera}
+                  className={`px-2 py-1 border text-[10px] font-bold cursor-pointer ${
+                    cameraStreamActive
+                      ? "bg-[#250d0d] text-red-400 border-red-500"
+                      : "bg-[#0e0e0e]/90 text-white border-[#444] hover:bg-white hover:text-black"
+                  }`}
+                >
+                  {cameraStreamActive ? "STOP CAMERA" : "START CAMERA"}
+                </button>
               </div>
 
-              {/* Shutter Button */}
-              <div className="flex items-center gap-3">
+              {/* Shutter Button & Upload */}
+              <div className="flex items-center gap-2">
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -380,16 +371,26 @@ export default function FieldCapturePage() {
                 />
 
                 <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="bg-[#1b1b1b] hover:bg-[#2b2b2b] text-white px-3 py-2 text-xs font-bold border border-[#444] cursor-pointer flex items-center gap-1.5"
+                >
+                  <Upload className="w-3.5 h-3.5" />
+                  <span>SELECT FILE</span>
+                </button>
+
+                <button
+                  type="button"
                   onClick={handleCaptureFromCamera}
                   disabled={isCapturing}
-                  className="bg-emerald-500 hover:bg-emerald-400 text-black px-4 py-2 font-code text-xs font-bold border-2 border-emerald-300 shadow-lg flex items-center gap-2 cursor-pointer transition-transform active:scale-95"
+                  className="bg-emerald-500 hover:bg-emerald-400 text-black px-4 py-2 text-xs font-bold border-2 border-emerald-300 shadow-lg flex items-center gap-2 cursor-pointer transition-transform active:scale-95"
                 >
                   {isCapturing ? (
                     <RefreshCw className="w-4 h-4 animate-spin" />
                   ) : (
                     <Camera className="w-4 h-4" />
                   )}
-                  <span>CAPTURE & PROVE</span>
+                  <span>CAPTURE &amp; PROVE</span>
                 </button>
               </div>
             </div>
@@ -397,7 +398,7 @@ export default function FieldCapturePage() {
 
           {/* Cryptographic Ledger Proof Banner */}
           {lastSha256 && (
-            <div className="bg-[#0e0e0e] border border-[#444748] p-3 font-code text-xs space-y-1">
+            <div className="bg-[#0e0e0e] border border-[#444748] p-3 space-y-1">
               <div className="flex items-center justify-between text-[#8e9192]">
                 <span className="text-emerald-400 font-bold flex items-center gap-1">
                   <CheckCircle2 className="w-3.5 h-3.5" />
@@ -413,7 +414,7 @@ export default function FieldCapturePage() {
 
           {/* Live Pipeline Result Card */}
           {pipelineResult && (
-            <div className="bg-[#0e0e0e] border-2 border-emerald-500 p-4 font-code text-xs space-y-3 animate-fadeIn">
+            <div className="bg-[#0e0e0e] border-2 border-emerald-500 p-4 space-y-3">
               <div className="flex items-center justify-between border-b border-[#333] pb-2">
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-5 h-5 text-emerald-400" />
@@ -435,7 +436,7 @@ export default function FieldCapturePage() {
                 <div className="bg-[#161616] p-2 border border-[#262626]">
                   <span className="text-[#888] block">AUTO-ASSIGNMENT:</span>
                   <span className="text-white font-semibold">
-                    {pipelineResult.assignment?.siteName || activeSite?.name || "Barmer RO Facility"}
+                    {pipelineResult.assignment?.siteName || activeSite?.name || "Facility"}
                   </span>
                   <span className="text-emerald-400 block text-[10px]">
                     Match Confidence: {Math.round((pipelineResult.assignment?.confidence ?? 0.95) * 100)}%
@@ -444,48 +445,37 @@ export default function FieldCapturePage() {
                 <div className="bg-[#161616] p-2 border border-[#262626]">
                   <span className="text-[#888] block">GEOFENCE INTEGRITY:</span>
                   <span className="text-white font-semibold">WITHIN BOUNDARY</span>
-                  <span className="text-[#888] block text-[10px]">Distance: 14.2m from centroid</span>
+                  <span className="text-[#888] block text-[10px]">
+                    Accuracy: ±{accuracy}m from centroid
+                  </span>
                 </div>
               </div>
 
-              {/* Heuristic Checks Summary */}
-              {pipelineResult.trust?.checks && (
-                <div className="space-y-1">
-                  <span className="text-[#888] text-[10px] uppercase font-bold">
-                    TRUST HEURISTIC EVALUATION:
-                  </span>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-                    {pipelineResult.trust.checks.map((chk, i) => (
-                      <div
-                        key={i}
-                        className="flex items-center justify-between bg-[#141414] px-2 py-1 border border-[#222]"
-                      >
-                        <span className="text-[#ccc] text-[10px]">{chk.name}</span>
-                        <span
-                          className={`text-[10px] font-bold ${
-                            chk.passed ? "text-emerald-400" : "text-red-400"
-                          }`}
-                        >
-                          {chk.passed ? "PASS (+100)" : "FAIL (-30)"}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+              {/* Action Link to Full Evidence View */}
+              {pipelineResult.asset && (
+                <div className="pt-2 border-t border-[#333] flex justify-end">
+                  <Link
+                    href={`/assets/${pipelineResult.asset.shortId || pipelineResult.asset.id}`}
+                    className="bg-emerald-500 hover:bg-emerald-400 text-black px-4 py-1.5 font-bold uppercase flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <span>VIEW FORENSIC DOSSIER &amp; CERTIFICATE</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </Link>
                 </div>
               )}
             </div>
           )}
         </div>
 
-        {/* Right Column: Site Selection & Metadata Inputs (5 cols) */}
+        {/* Right Column: Site Selection & Dynamic Milestones */}
         <div className="lg:col-span-5 flex flex-col space-y-4">
-          <div className="bg-[#0e0e0e] border border-[#444748] p-4 font-code text-xs space-y-4">
+          <div className="bg-[#0e0e0e] border border-[#444748] p-4 space-y-4">
             <div className="border-b border-[#333] pb-2">
               <h2 className="text-white font-bold text-sm tracking-wide uppercase">
                 FIELD CAPTURE METADATA
               </h2>
               <p className="text-[#8e9192] text-[11px] mt-0.5">
-                Section 135 statutory compliance parameters & site binding
+                Section 135 statutory compliance parameters &amp; site binding
               </p>
             </div>
 
@@ -505,25 +495,43 @@ export default function FieldCapturePage() {
               </select>
             </div>
 
-            {/* Milestone Selector */}
+            {/* Dynamic Milestone Selector */}
             <div className="space-y-1.5">
               <label className="text-[#c4c7c8] font-bold block">02 // EVIDENCED MILESTONE</label>
-              <div className="grid grid-cols-3 gap-2">
-                {["MS-02", "MS-03", "MS-04"].map((ms) => (
-                  <button
-                    key={ms}
-                    type="button"
-                    onClick={() => setSelectedMilestone(ms)}
-                    className={`py-2 px-1 text-center font-bold border cursor-pointer transition-colors ${
-                      selectedMilestone === ms
-                        ? "bg-white text-black border-white"
-                        : "bg-[#1b1b1b] text-[#8e9192] border-[#444] hover:text-white"
-                    }`}
-                  >
-                    {ms}
-                  </button>
-                ))}
-              </div>
+              {siteMilestones.length > 0 ? (
+                <div className="space-y-1.5">
+                  {siteMilestones.map((ms) => (
+                    <button
+                      key={ms.id}
+                      type="button"
+                      onClick={() => setSelectedMilestone(ms.id)}
+                      className={`w-full py-2 px-2 text-left font-bold border cursor-pointer transition-colors text-[11px] flex items-center justify-between ${
+                        selectedMilestone === ms.id
+                          ? "bg-white text-black border-white"
+                          : "bg-[#1b1b1b] text-[#8e9192] border-[#444] hover:text-white"
+                      }`}
+                    >
+                      <span className="truncate">{ms.name}</span>
+                      <span className="text-[10px] font-mono shrink-0 ml-2">[{ms.id}]</span>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-2 border border-dashed border-[#444] text-[#888] text-[11px]">
+                  Baseline verification deliverable
+                </div>
+              )}
+            </div>
+
+            {/* Audit Notes */}
+            <div className="space-y-1.5">
+              <label className="text-[#c4c7c8] font-bold block">03 // AUDITOR FIELD CAPTION</label>
+              <textarea
+                value={auditNotes}
+                onChange={(e) => setAuditNotes(e.target.value)}
+                placeholder="Observed completion details, local witness attestations, or serial numbers..."
+                className="w-full bg-[#1b1b1b] text-white border border-[#444748] p-2 focus:border-white focus:outline-none h-20 resize-none text-[11px]"
+              />
             </div>
 
             {/* GPS Telemetry Display */}
@@ -549,34 +557,11 @@ export default function FieldCapturePage() {
                   onChange={(e) => setWitnessChecked(e.target.checked)}
                   className="mt-0.5 accent-emerald-500"
                 />
-                <span className="text-[#c4c7c8] text-[11px] leading-tight">
-                  I attest that this evidence was captured directly on-site at the specified geofence
-                  coordinates in the presence of designated NGO witnesses.
+                <span className="text-[#c4c7c8] text-[11px] leading-relaxed">
+                  I solemnly attest under statutory penalties that this evidence was recorded
+                  in-situ at the designated geofence without physical or digital spoofing.
                 </span>
               </label>
-            </div>
-
-            {/* Audit Notes */}
-            <div className="space-y-1.5">
-              <label className="text-[#c4c7c8] font-bold block">03 // FIELD AUDITOR NOTES</label>
-              <textarea
-                value={auditNotes}
-                onChange={(e) => setAuditNotes(e.target.value)}
-                placeholder="Observation details, water flow testing readings, structural notes..."
-                rows={3}
-                className="w-full bg-[#1b1b1b] text-white border border-[#444748] p-2 focus:border-white focus:outline-none placeholder-[#666]"
-              />
-            </div>
-
-            {/* Action Bar */}
-            <div className="pt-2">
-              <Link
-                href="/dashboard"
-                className="w-full bg-[#1f1f1f] hover:bg-white hover:text-black text-white p-2.5 border border-[#444] font-bold text-center flex items-center justify-center gap-2 transition-colors uppercase"
-              >
-                <span>RETURN TO PORTFOLIO DASHBOARD</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
             </div>
           </div>
         </div>
