@@ -23,6 +23,7 @@ export interface AppUser {
   email?: string;
   phone?: string;
   language: string;
+  password?: string;
 }
 
 export interface Grant {

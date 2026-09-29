@@ -14,12 +14,33 @@ export interface AuthenticUser {
   orgType: string;
 }
 
+export interface AuthenticOrg {
+  id: string;
+  name: string;
+  type: string;
+  slug: string;
+}
+
+export interface RegisterPayload {
+  name: string;
+  email: string;
+  password?: string;
+  role: string;
+  orgId?: string;
+  newOrgName?: string;
+  newOrgType?: string;
+  phone?: string;
+}
+
 export interface AuthContextType {
   session: UserSessionPayload | null;
   loading: boolean;
   users: AuthenticUser[];
   tenants: string[];
+  orgs: AuthenticOrg[];
   switchUser: (userId: string) => Promise<boolean>;
+  loginWithCredentials: (email: string, password?: string) => Promise<{ success: boolean; error?: string }>;
+  registerUser: (payload: RegisterPayload) => Promise<{ success: boolean; error?: string }>;
   switchTenant: (tenantName: string) => Promise<void>;
   updateReusableData: (data: Partial<UserSessionPayload["reusableData"]>) => Promise<void>;
   logout: () => Promise<void>;
@@ -33,6 +54,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<AuthenticUser[]>([]);
   const [tenants, setTenants] = useState<string[]>([]);
+  const [orgs, setOrgs] = useState<AuthenticOrg[]>([]);
 
   // Refresh active session from /api/auth/session
   const refreshSession = useCallback(async () => {
@@ -69,6 +91,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (oRes.ok) {
         const oData = await oRes.json();
         if (oData?.orgs) {
+          setOrgs(oData.orgs);
           setTenants(oData.orgs.map((o: any) => o.name));
         }
       }
@@ -105,6 +128,65 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (err) {
       console.error("Error switching user:", err);
       return false;
+    }
+  };
+
+  // Login with email & password
+  const loginWithCredentials = async (
+    email: string,
+    password?: string
+  ): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          password,
+          reusableData: session?.reusableData
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        return { success: false, error: data.error || "Login failed" };
+      }
+
+      if (data?.user) {
+        setSession(data.user);
+        await loadUsersAndTenants();
+        return { success: true };
+      }
+      return { success: false, error: "Invalid response from server" };
+    } catch (err: any) {
+      return { success: false, error: err.message || "Network error during login" };
+    }
+  };
+
+  // Register a new user profile
+  const registerUser = async (
+    payload: RegisterPayload
+  ): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        return { success: false, error: data.error || "Registration failed" };
+      }
+
+      if (data?.user) {
+        setSession(data.user);
+        await loadUsersAndTenants();
+        return { success: true };
+      }
+      return { success: false, error: "Failed to establish session after registration" };
+    } catch (err: any) {
+      return { success: false, error: err.message || "Registration error" };
     }
   };
 
@@ -152,7 +234,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         loading,
         users,
         tenants,
+        orgs,
         switchUser,
+        loginWithCredentials,
+        registerUser,
         switchTenant,
         updateReusableData,
         logout,

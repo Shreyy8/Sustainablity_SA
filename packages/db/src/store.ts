@@ -77,6 +77,10 @@ class PluribusStore {
   getOrgById(id: string): Organization | undefined {
     return this.orgs.find((o) => o.id === id || o.slug === id);
   }
+  insertOrg(org: Organization): Organization {
+    this.orgs.push(org);
+    return org;
+  }
 
   // Users
   getUsers(): AppUser[] {
@@ -84,6 +88,9 @@ class PluribusStore {
   }
   getUserById(id: string): AppUser | undefined {
     return this.users.find((u) => u.id === id);
+  }
+  getUserByEmail(email: string): AppUser | undefined {
+    return this.users.find((u) => u.email?.toLowerCase() === email.toLowerCase());
   }
   insertUser(user: AppUser): AppUser {
     this.users.push(user);

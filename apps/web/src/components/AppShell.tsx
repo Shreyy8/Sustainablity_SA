@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   ShieldAlert,
   ShieldCheck,
@@ -23,6 +23,8 @@ import {
   Trash2,
   CheckCircle2,
   UserCheck,
+  UserPlus,
+  LogIn,
   Sparkles
 } from "lucide-react";
 import { AuthProvider, useAuth } from "../context/AuthContext";
@@ -38,7 +40,13 @@ interface NavItem {
 
 function AppShellContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const { session, users, tenants, switchUser, switchTenant, logout, refreshSession } = useAuth();
+
+  // If on login or register screen, render full-bleed clean auth view
+  if (pathname === "/login" || pathname === "/register") {
+    return <main className="min-h-screen bg-[#101010] text-[#e2e2e2]">{children}</main>;
+  }
 
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [pendingTriageCount, setPendingTriageCount] = useState(0);
@@ -213,6 +221,16 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
           >
             {userInitials}
           </div>
+
+          {/* Quick link to Auth portal */}
+          <Link
+            href="/login"
+            title="Sign in or register a new user profile"
+            className="hidden xl:flex items-center gap-1.5 text-[10px] font-code text-[#c4c7c8] hover:text-white bg-[#1a1a1a] hover:bg-[#252525] border border-[#444748] px-2.5 py-1 transition-colors"
+          >
+            <UserPlus className="w-3 h-3 text-emerald-400" />
+            <span>LOGIN / REGISTER</span>
+          </Link>
         </div>
       </header>
 
@@ -478,9 +496,29 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
               </button>
 
               <div className="flex items-center gap-2">
+                <Link
+                  href="/login"
+                  onClick={() => setSessionModalOpen(false)}
+                  className="bg-[#222] hover:bg-[#333] border border-[#444] text-white px-3 py-1.5 font-bold cursor-pointer transition-colors flex items-center gap-1.5"
+                >
+                  <LogIn className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>SIGN IN</span>
+                </Link>
+                <Link
+                  href="/login?tab=register"
+                  onClick={() => setSessionModalOpen(false)}
+                  className="bg-[#222] hover:bg-[#333] border border-[#444] text-white px-3 py-1.5 font-bold cursor-pointer transition-colors flex items-center gap-1.5"
+                >
+                  <UserPlus className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>REGISTER</span>
+                </Link>
                 <button
-                  onClick={logout}
-                  className="bg-[#222] hover:bg-[#333] text-white px-3 py-1.5 font-bold cursor-pointer transition-colors"
+                  onClick={async () => {
+                    await logout();
+                    setSessionModalOpen(false);
+                    router.push("/login");
+                  }}
+                  className="bg-red-900/60 hover:bg-red-900 border border-red-700 text-red-100 px-3 py-1.5 font-bold cursor-pointer transition-colors"
                 >
                   LOGOUT
                 </button>
