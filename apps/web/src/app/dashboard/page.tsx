@@ -21,6 +21,7 @@ import {
 import { InteractiveMap, MapSite } from "../../components/InteractiveMap";
 
 interface DashboardData {
+  isSampleData: boolean;
   kpis: {
     totalProjects: number;
     totalEvidencedMilestones: number;
@@ -112,9 +113,10 @@ export default function CorporateDashboardPage() {
     const projStat = data?.projects.find((p) => p.project.id === site.projectId);
     const hasFlagged = (data?.flaggedAssets || []).some((a) => a.siteId === site.id);
     const hasReview = (data?.reviewAssets || []).some((a) => a.siteId === site.id);
+    const hasEvidence = (projStat?.totalAssets ?? 0) > 0;
     const status: "verified" | "flagged" | "pending" = hasFlagged
       ? "flagged"
-      : hasReview
+      : hasReview || !hasEvidence
       ? "pending"
       : "verified";
 
@@ -122,15 +124,15 @@ export default function CorporateDashboardPage() {
       id: site.id,
       name: site.name,
       projectId: site.projectId,
-      projectName: projStat?.project.name || "Rural Development Project",
-      district: projStat?.project.district || "Barmer",
-      state: projStat?.project.state || "Rajasthan",
-      coveragePercent: projStat?.coveragePercent ?? 85,
-      trustScore: projStat?.avgTrustScore ?? 96,
+      projectName: projStat?.project.name || "No project linked",
+      district: projStat?.project.district || "Location unavailable",
+      state: projStat?.project.state || "",
+      coveragePercent: projStat?.coveragePercent ?? 0,
+      trustScore: projStat?.avgTrustScore ?? 0,
       status,
       centroid: site.centroid,
       geofence: site.geofence,
-      totalAssets: projStat?.totalAssets ?? 12,
+      totalAssets: projStat?.totalAssets ?? 0,
       isFrozen: frozenSites.includes(site.name)
     };
   });
@@ -169,12 +171,48 @@ export default function CorporateDashboardPage() {
     }).format(val);
   };
 
+  if (loading) {
+    return (
+      <div className="flex min-h-[calc(100vh-48px)] items-center justify-center bg-[#131313] p-6">
+        <div className="border border-[#444748] bg-[#0e0e0e] px-6 py-5 font-code text-xs text-[#c4c7c8]">
+          <RefreshCw className="mx-auto mb-3 h-5 w-5 animate-spin text-emerald-400" />
+          LOADING PORTFOLIO DATA...
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex min-h-[calc(100vh-48px)] items-center justify-center bg-[#131313] p-6">
+        <div className="max-w-md border border-[#bb0112] bg-[#250d0d] px-6 py-5 font-code text-xs text-[#ffb4ab]">
+          <div className="mb-2 flex items-center gap-2 font-bold">
+            <AlertTriangle className="h-4 w-4" />
+            PORTFOLIO DATA UNAVAILABLE
+          </div>
+          <p className="mb-4 text-[#e2e2e2]">{error}</p>
+          <button
+            onClick={loadDashboardData}
+            className="border border-[#ffb4ab] px-3 py-1.5 font-bold text-[#ffb4ab] hover:bg-[#ffb4ab] hover:text-black"
+          >
+            RETRY SYNC
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col w-full bg-[#131313] min-h-[calc(100vh-48px)]">
       {/* Top Console Ledger Status */}
       <div className="w-full bg-[#0e0e0e] border-b border-[#444748] px-3 md:px-4 py-1.5 flex flex-wrap items-center justify-between font-code text-[11px] gap-y-1">
         <div className="flex items-center gap-2 text-[#8e9192] flex-wrap">
           <span className="text-white font-bold">PORTAL::COMMAND_CENTER</span>
+          {data?.isSampleData && (
+            <span className="border border-yellow-500 px-1.5 py-0.5 font-bold text-yellow-400">
+              DEMO DATA
+            </span>
+          )}
           <span>//</span>
           <span className="text-emerald-400 font-semibold">SEC_135_COMPLIANCE_ENGINE</span>
           <span>//</span>
@@ -224,7 +262,7 @@ export default function CorporateDashboardPage() {
           </div>
           <div className="my-2">
             <span className="font-metric text-xl md:text-2xl text-white font-bold tracking-tight">
-              {data?.kpis?.totalGrantValue ? formatINR(data.kpis.totalGrantValue) : "₹24,800,000"}
+              {formatINR(data?.kpis?.totalGrantValue ?? 0)}
             </span>
           </div>
           <div className="flex items-center justify-between font-code text-[11px] text-[#c4c7c8]">
@@ -241,7 +279,7 @@ export default function CorporateDashboardPage() {
           </div>
           <div className="my-2 flex items-baseline gap-2">
             <span className="font-metric text-xl md:text-2xl text-emerald-400 font-bold tracking-tight">
-              {data?.kpis?.avgTrustScore ? `${data.kpis.avgTrustScore}%` : "95.8%"}
+              {data?.kpis?.avgTrustScore ?? 0}%
             </span>
             <span className="text-[11px] font-code text-white bg-[#1e3a1e] px-1.5 py-0.5 border border-[#22c55e]">
               GRADE A1
@@ -261,9 +299,7 @@ export default function CorporateDashboardPage() {
           </div>
           <div className="my-2">
             <span className="font-metric text-xl md:text-2xl text-white font-bold tracking-tight">
-              {data?.kpis?.totalEvidencedMilestones
-                ? `${data.kpis.totalEvidencedMilestones} MILESTONES`
-                : "12 MILESTONES"}
+              {data?.kpis?.totalEvidencedMilestones ?? 0} MILESTONES
             </span>
           </div>
           <div className="flex items-center justify-between font-code text-[11px] text-[#c4c7c8]">
@@ -280,10 +316,10 @@ export default function CorporateDashboardPage() {
           </div>
           <div className="my-2 flex items-baseline gap-2">
             <span className="font-metric text-xl md:text-2xl text-[#ffb4ab] font-bold tracking-tight">
-              {data?.kpis?.flaggedCount ?? 2} FLAGGED
+              {data?.kpis?.flaggedCount ?? 0} FLAGGED
             </span>
             <span className="text-[11px] font-code text-[#ffb4ab] bg-[#3a1e1e] px-1.5 py-0.5 border border-[#bb0112]">
-              {data?.kpis?.reviewCount ?? 1} REVIEW
+              {data?.kpis?.reviewCount ?? 0} REVIEW
             </span>
           </div>
           <div className="flex items-center justify-between font-code text-[11px] text-[#c4c7c8]">

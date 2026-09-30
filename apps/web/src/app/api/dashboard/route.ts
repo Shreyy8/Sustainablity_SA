@@ -34,6 +34,7 @@ export async function GET() {
   });
 
   return NextResponse.json({
+    isSampleData: store.isSampleDataLoaded(),
     kpis,
     projects: projectStats,
     sites,
